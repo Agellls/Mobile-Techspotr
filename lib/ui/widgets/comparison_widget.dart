@@ -60,12 +60,14 @@ class ComparisonWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              title,
-              style: blackTextStyle.copyWith(
-                fontSize: 16,
-                fontWeight: extrabold,
-                color: activeColor,
+            Flexible(
+              child: Text(
+                title,
+                style: blackTextStyle.copyWith(
+                  fontSize: 16,
+                  fontWeight: extrabold,
+                  color: activeColor,
+                ),
               ),
             ),
             Text(

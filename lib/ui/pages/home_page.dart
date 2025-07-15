@@ -11,115 +11,29 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:get/get.dart';
 
+import '../../controllers/get_posts_controller.dart';
+import '../../controllers/get_category_controller.dart';
 import '../../routes/routes_name.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({super.key});
 
-  final searchController = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
   final FocusNode searchFocusNode = FocusNode();
   final ComparisonController comparisonController =
       Get.put(ComparisonController());
   final ThemeController themeController = Get.find<ThemeController>();
+  final GetPostsController getPostsController = Get.put(GetPostsController());
+  final GetCategoryController getCategoryController =
+      Get.put(GetCategoryController());
   final box = GetStorage();
+
+  // Add ScrollController for pagination
+  final ScrollController scrollController = ScrollController();
 
   // GetX reactive drag state
   final RxInt dragOverSlot = (-1).obs;
   final RxBool isDragInProgress = false.obs;
-
-  // Sample product data - in a real app, you'd fetch this from an API
-  final RxList<Map<String, dynamic>> allProducts = [
-    {
-      'id': '1',
-      'productName': 'Samsung Galaxy S25',
-      'productImage':
-          'https://m-cdn.phonearena.com/images/phones/84862-350/Samsung-Galaxy-S25.webp',
-      'productRating': 8.3,
-      'productPrice': [999.99, 100.88],
-      'productPriceImages': [
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://buywiseappliances.co.uk&size=128',
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://buywiseappliances.co.uk&size=128'
-      ],
-      'brandImage':
-          'https://brandlogos.net/wp-content/uploads/2014/08/samsung-logo-preview-400x400.png',
-      'brandName': 'Samsung',
-    },
-    {
-      'id': '2',
-      'productName': 'Apple iPhone 13 Pro Max',
-      'productImage':
-          'https://m-cdn.phonearena.com/images/phones/82890-350/Apple-iPhone-13-Pro-Max.webp',
-      'productPrice': [999.99, 2100.44],
-      'productPriceImages': [
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://buywiseappliances.co.uk&size=128',
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://buywiseappliances.co.uk&size=128'
-      ],
-      'productRating': 9.0,
-      'brandImage':
-          'https://brandlogos.net/wp-content/uploads/2014/08/apple-logo-preview-400x400.png',
-      'brandName': 'Apple',
-    },
-    {
-      'id': '3',
-      'productName': 'Google Pixel 7 Pro',
-      'productImage':
-          'https://m-cdn.phonearena.com/images/phones/80394-350/Google-Pixel-7-Pro.webp',
-      'productPrice': [899.99, 950.00],
-      'productPriceImages': [
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://store.google.com&size=128',
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://amazon.com&size=128'
-      ],
-      'productRating': 8.5,
-      'brandImage':
-          'https://brandlogos.net/wp-content/uploads/2020/11/google-logo-400x400.png',
-      'brandName': 'Google',
-    },
-    {
-      'id': '4',
-      'productName': 'Xiaomi Mi 12 Ultra',
-      'productImage':
-          'https://m-cdn.phonearena.com/images/phones/82704-350/Xiaomi-Mi-12-Ultra.webp',
-      'productPrice': [799.99, 850.88],
-      'productPriceImages': [
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://mi.com&size=128',
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://ebay.com&size=128'
-      ],
-      'productRating': 8.2,
-      'brandImage':
-          'https://brandlogos.net/wp-content/uploads/2022/01/xiaomi_logo-400x400.png',
-      'brandName': 'Xiaomi',
-    },
-    {
-      'id': '5',
-      'productName': 'OnePlus 10 Pro',
-      'productImage':
-          'https://m-cdn.phonearena.com/images/phones/83261-350/OnePlus-10-Pro.webp',
-      'productPrice': [749.99, 799.99],
-      'productPriceImages': [
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://oneplus.com&size=128',
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://bestbuy.com&size=128'
-      ],
-      'productRating': 8.7,
-      'brandImage':
-          'https://brandlogos.net/wp-content/uploads/2023/01/oneplus_logo-400x400.png',
-      'brandName': 'OnePlus',
-    },
-    {
-      'id': '6',
-      'productName': 'Sony Xperia 1 IV',
-      'productImage':
-          'https://m-cdn.phonearena.com/images/phones/83953-350/Sony-Xperia-1-IV.webp',
-      'productPrice': [1099.99, 1199.99],
-      'productPriceImages': [
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://sony.com&size=128',
-        'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://walmart.com&size=128'
-      ],
-      'productRating': 8.1,
-      'brandImage':
-          'https://brandlogos.net/wp-content/uploads/2020/11/sony-logo-400x400.png',
-      'brandName': 'Sony',
-    },
-  ].obs;
 
   // Filtered products list
   final RxList<Map<String, dynamic>> filteredProducts =
@@ -131,26 +45,38 @@ class HomePage extends StatelessWidget {
   // Filter products based on search query
   void filterProducts(String query) {
     isSearching.value = query.isNotEmpty;
+    getPostsController.filterPosts(query);
+  }
 
-    if (query.isEmpty) {
-      filteredProducts.assignAll(allProducts);
-    } else {
-      final lowercaseQuery = query.toLowerCase();
-      filteredProducts.assignAll(allProducts.where((product) {
-        final productName = product['productName'].toString().toLowerCase();
-        final brandName = product['brandName'].toString().toLowerCase();
-        return productName.contains(lowercaseQuery) ||
-            brandName.contains(lowercaseQuery);
-      }).toList());
-    }
+  // Add clear search method
+  void clearSearch() {
+    // Force clear the text controller
+    searchController.text = '';
+    searchController.clear();
+    // Clear the search in posts controller
+    getPostsController.clearSearch();
+    // Update local search state
+    isSearching.value = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    // Initialize filtered products with all products on first build
-    if (filteredProducts.isEmpty) {
-      filteredProducts.assignAll(allProducts);
-    }
+    // Setup scroll listener for pagination
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 200) {
+        // Load more when user is 200px from bottom
+        getPostsController.loadMorePosts();
+      }
+    });
+
+    // Listen to search query changes to update text field
+    ever(getPostsController.searchQuery, (String query) {
+      if (query.isEmpty && searchController.text.isNotEmpty) {
+        searchController.clear();
+        isSearching.value = false;
+      }
+    });
 
     return Obx(() => Container(
           color: themeController.currentPrimaryColor,
@@ -170,114 +96,206 @@ class HomePage extends StatelessWidget {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(defaultSpace),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SvgPicture.string(
-                                          box.read('LogoImage'),
-                                          width: 30,
-                                        ),
-                                        const Spacer(),
-                                        Icon(
-                                          CupertinoIcons.bell,
-                                          color: blackColor,
-                                          size: 30,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: defaultSpace / 2),
-                                    Text(
-                                      'Welcome to ${box.read('NameBrand')}',
-                                      style: blackTextStyle.copyWith(
-                                        fontSize: 16,
-                                        fontWeight: regular,
-                                        color:
-                                            themeController.currentThirdtyColor,
-                                      ),
-                                    ),
-                                    const SizedBox(height: defaultSpace),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: SearchForms(
-                                        hintText: 'Search Products',
-                                        fillColor: themeController
-                                            .currentSecondaryColor,
-                                        controller: searchController,
-                                        focusNode: searchFocusNode,
-                                        isSearch: true,
-                                        onChanged: (value) {
-                                          filterProducts(value);
-                                        },
-                                        onClearPressed: () {
-                                          // This should completely clear the search
-                                          searchController.clear();
-                                          filterProducts('');
-                                          FocusScope.of(context).unfocus();
-                                          isSearching.value =
-                                              false; // Explicitly set search state to false
-                                        },
-                                      ),
-                                    ),
-                                    // const SizedBox(height: defaultSpace),
-                                    // Row(
-                                    //   crossAxisAlignment: CrossAxisAlignment.start,
-                                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    //   children: [
-                                    //     Text(
-                                    //       'All Products',
-                                    //       style: blackTextStyle.copyWith(
-                                    //         fontSize: 18,
-                                    //         fontWeight: bold,
-                                    //       ),
-                                    //     ),
-                                    //     Text(
-                                    //       'See all',
-                                    //       style: blackTextStyle.copyWith(
-                                    //         fontSize: 14,
-                                    //         fontWeight: bold,
-                                    //       ),
-                                    //     ),
-                                    //   ],
-                                    // ),
-                                    const SizedBox(height: defaultSpace),
-                                    const SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
+                        child: RefreshIndicator(
+                          onRefresh: () => getPostsController.refreshPosts(),
+                          child: SingleChildScrollView(
+                            controller: scrollController,
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(defaultSpace),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
                                         children: [
-                                          ButtonTextMenu(
-                                            isActive: true,
-                                            text: 'Phone',
+                                          SvgPicture.string(
+                                            box.read('LogoImage'),
+                                            width: 30,
                                           ),
-                                          ButtonTextMenu(
-                                            text: 'Refrigerator',
-                                          ),
-                                          ButtonTextMenu(
-                                            text: 'AC',
-                                          ),
-                                          ButtonTextMenu(
-                                            text: 'Washing Machine',
+                                          const Spacer(),
+                                          Icon(
+                                            CupertinoIcons.bell,
+                                            color: blackColor,
+                                            size: 30,
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: defaultSpace / 2),
+                                      Text(
+                                        'Welcome to ${box.read('NameBrand')}',
+                                        style: blackTextStyle.copyWith(
+                                          fontSize: 16,
+                                          fontWeight: regular,
+                                          color: themeController
+                                              .currentThirdtyColor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: defaultSpace),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        child: SearchForms(
+                                          hintText: 'Search Products',
+                                          fillColor: themeController
+                                              .currentSecondaryColor,
+                                          controller: searchController,
+                                          focusNode: searchFocusNode,
+                                          isSearch: true,
+                                          onChanged: (value) {
+                                            filterProducts(value);
+                                          },
+                                          onClearPressed: () {
+                                            clearSearch();
+                                            FocusScope.of(context).unfocus();
+                                          },
+                                        ),
+                                      ),
+                                      // const SizedBox(height: defaultSpace),
+                                      // Row(
+                                      //   crossAxisAlignment: CrossAxisAlignment.start,
+                                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      //   children: [
+                                      //     Text(
+                                      //       'All Products',
+                                      //       style: blackTextStyle.copyWith(
+                                      //         fontSize: 18,
+                                      //         fontWeight: bold,
+                                      //       ),
+                                      //     ),
+                                      //     Text(
+                                      //       'See all',
+                                      //       style: blackTextStyle.copyWith(
+                                      //         fontSize: 14,
+                                      //         fontWeight: bold,
+                                      //       ),
+                                      //     ),
+                                      //   ],
+                                      // ),
+                                      const SizedBox(height: defaultSpace),
+                                      // Replace static categories with dynamic ones
+                                      Obx(() {
+                                        if (getCategoryController
+                                            .isLoading.value) {
+                                          return const SizedBox(
+                                            height: 40,
+                                            child: Center(
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+                                          );
+                                        }
+
+                                        if (getCategoryController
+                                            .hasError.value) {
+                                          return const SizedBox.shrink();
+                                        }
+
+                                        return SingleChildScrollView(
+                                          scrollDirection: Axis.horizontal,
+                                          child: Row(
+                                            children: [
+                                              // "All" category button
+                                              Obx(() => ButtonTextMenu(
+                                                    isActive: getCategoryController
+                                                            .selectedCategoryId
+                                                            .value ==
+                                                        0,
+                                                    text: 'All',
+                                                    onTap: () {
+                                                      getCategoryController
+                                                          .selectCategory(0);
+                                                      // Clear search with delay to ensure it happens after category switch
+                                                      Future.delayed(
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  100), () {
+                                                        clearSearch();
+                                                      });
+                                                    },
+                                                  )),
+
+                                              // Dynamic category buttons
+                                              ...getCategoryController
+                                                  .categories
+                                                  .map((category) {
+                                                return Obx(() => ButtonTextMenu(
+                                                      isActive:
+                                                          getCategoryController
+                                                                  .selectedCategoryId
+                                                                  .value ==
+                                                              category['id'],
+                                                      text: category['name'] ??
+                                                          'Unknown',
+                                                      onTap: () {
+                                                        getCategoryController
+                                                            .selectCategory(
+                                                                category['id']);
+                                                        // Clear search with delay to ensure it happens after category switch
+                                                        Future.delayed(
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    100), () {
+                                                          clearSearch();
+                                                        });
+                                                      },
+                                                    ));
+                                              }).toList(),
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: defaultSpace / 2),
-                                child: Obx(
-                                  () => filteredProducts.isEmpty
-                                      ? Center(
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: defaultSpace / 2),
+                                  child: Obx(
+                                    () {
+                                      if (getPostsController.isLoading.value &&
+                                          getPostsController.allPosts.isEmpty) {
+                                        return const Center(
+                                          child: Padding(
+                                            padding: EdgeInsets.all(20.0),
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                      }
+
+                                      if (getPostsController.hasError.value) {
+                                        return Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(20.0),
+                                            child: Column(
+                                              children: [
+                                                Text(
+                                                  'Error loading posts',
+                                                  style:
+                                                      blackTextStyle.copyWith(
+                                                    fontSize: 16,
+                                                    fontWeight: medium,
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 10),
+                                                ElevatedButton(
+                                                  onPressed: () =>
+                                                      getPostsController
+                                                          .refreshPosts(),
+                                                  child: const Text('Retry'),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      }
+
+                                      if (getPostsController
+                                          .filteredPosts.isEmpty) {
+                                        return Center(
                                           child: Padding(
                                             padding: const EdgeInsets.all(20.0),
                                             child: Text(
@@ -288,35 +306,81 @@ class HomePage extends StatelessWidget {
                                               ),
                                             ),
                                           ),
-                                        )
-                                      : FlexibleWrap(
-                                          spacing: defaultSpace,
-                                          runSpacing: defaultSpace,
-                                          isOneRowExpanded: true,
-                                          children:
-                                              filteredProducts.map((product) {
-                                            return SingleProducts(
-                                              id: product['id'],
-                                              productName:
-                                                  product['productName'],
-                                              productImage:
-                                                  product['productImage'],
-                                              productRating:
-                                                  product['productRating'],
-                                              productPrice: List<double>.from(
-                                                  product['productPrice']),
-                                              productPriceImages:
-                                                  List<String>.from(product[
-                                                      'productPriceImages']),
-                                              brandImage: product['brandImage'],
-                                              brandName: product['brandName'],
-                                            );
-                                          }).toList(),
-                                        ),
+                                        );
+                                      }
+
+                                      return Column(
+                                        children: [
+                                          FlexibleWrap(
+                                            spacing: defaultSpace,
+                                            runSpacing: defaultSpace,
+                                            isOneRowExpanded: true,
+                                            children: getPostsController
+                                                .filteredPosts
+                                                .map((product) {
+                                              return SingleProducts(
+                                                id: product['id']?.toString() ??
+                                                    '',
+                                                productName:
+                                                    product['productName'] ??
+                                                        'Unknown Product',
+                                                productImage:
+                                                    product['productImage'] ??
+                                                        '',
+                                                productRating:
+                                                    (product['productRating'] ??
+                                                            0.0)
+                                                        .toDouble(),
+                                                productPrice: List<double>.from(
+                                                    product['productPrice'] ??
+                                                        [0.0]),
+                                                productPriceImages: List<
+                                                    String>.from(product[
+                                                        'productPriceImages'] ??
+                                                    []),
+                                                brandImage:
+                                                    product['brandImage'] ?? '',
+                                                brandName:
+                                                    product['brandName'] ??
+                                                        'Unknown Brand',
+                                              );
+                                            }).toList(),
+                                          ),
+
+                                          // Loading more indicator
+                                          if (getPostsController
+                                              .isLoadingMore.value)
+                                            const Padding(
+                                              padding: EdgeInsets.all(20.0),
+                                              child:
+                                                  CircularProgressIndicator(),
+                                            ),
+
+                                          // End of data indicator
+                                          if (!getPostsController
+                                                  .hasMoreData.value &&
+                                              getPostsController
+                                                  .allPosts.isNotEmpty)
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(20.0),
+                                              child: Text(
+                                                'No more products to load',
+                                                style: blackTextStyle.copyWith(
+                                                  fontSize: 14,
+                                                  fontWeight: medium,
+                                                  color: Colors.grey,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      );
+                                    },
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: defaultSpace),
-                            ],
+                                const SizedBox(height: defaultSpace),
+                              ],
+                            ),
                           ),
                         ),
                       ),

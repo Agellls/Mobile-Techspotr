@@ -96,7 +96,7 @@ class _AnimatedShadowCardState extends State<_AnimatedShadowCard> {
     Get.toNamed(
       RouteName.single,
       arguments: {
-        'id': widget.id,
+        'id': widget.id, // Make sure this is passed correctly
         'productName': widget.productName,
         'productPrice': widget.productPrice,
         'productPriceImages': widget.productPriceImages,

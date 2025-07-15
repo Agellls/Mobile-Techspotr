@@ -17,81 +17,84 @@ class StoreButtonController extends GetxController {
 
 class StoreButton extends StatelessWidget {
   final String logoUrl;
+  final double price;
   final String currency;
-  final num price;
-  final String url;
+  final VoidCallback? onTap;
   final StoreButtonController controller = StoreButtonController();
 
   StoreButton({
     super.key,
     required this.logoUrl,
     required this.price,
-    this.url = '',
     required this.currency,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     // Initialize the price value only once
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.setPrice(price.toDouble());
+      controller.setPrice(price);
     });
 
-    return IntrinsicWidth(
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-            horizontal: defaultSpace, vertical: defaultSpace / 2),
-        decoration: BoxDecoration(
-          color: secondaryColor,
-          borderRadius: BorderRadius.circular(100),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ClipOval(
-              child: CachedNetworkImage(
-                imageUrl: logoUrl,
-                width: 15,
-                height: 15,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Shimmer.fromColors(
-                  baseColor: secondaryColor,
-                  highlightColor: thirdtyColor,
-                  child: const ShimmerPerProfile(),
-                ),
-                errorWidget: (context, url, error) => Image.network(
-                  'https://icons.veryicon.com/png/o/business/new-vision-2/picture-loading-failed-1.png',
+    return GestureDetector(
+      onTap: onTap,
+      child: IntrinsicWidth(
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+              horizontal: defaultSpace, vertical: defaultSpace / 2),
+          decoration: BoxDecoration(
+            color: secondaryColor,
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ClipOval(
+                child: CachedNetworkImage(
+                  imageUrl: logoUrl,
                   width: 15,
                   height: 15,
                   fit: BoxFit.cover,
-                ),
-              ),
-            ),
-            const SizedBox(width: defaultSpace / 2),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  currency,
-                  style: blackTextStyle.copyWith(
-                    fontWeight: bold,
-                    fontSize: 12,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: secondaryColor,
+                    highlightColor: thirdtyColor,
+                    child: const ShimmerPerProfile(),
+                  ),
+                  errorWidget: (context, url, error) => Image.network(
+                    'https://icons.veryicon.com/png/o/business/new-vision-2/picture-loading-failed-1.png',
+                    width: 15,
+                    height: 15,
+                    fit: BoxFit.cover,
                   ),
                 ),
-                Obx(
-                  () => AnimatedFlipCounter(
-                    value: controller._value.value,
-                    duration: const Duration(milliseconds: 1500),
-                    curve: Curves.easeInOut,
-                    textStyle: blackTextStyle.copyWith(
+              ),
+              const SizedBox(width: defaultSpace / 2),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    currency,
+                    style: blackTextStyle.copyWith(
                       fontWeight: bold,
                       fontSize: 12,
                     ),
                   ),
-                ),
-              ],
-            )
-          ],
+                  Obx(
+                    () => AnimatedFlipCounter(
+                      value: controller._value.value,
+                      duration: const Duration(milliseconds: 1500),
+                      curve: Curves.easeInOut,
+                      textStyle: blackTextStyle.copyWith(
+                        fontWeight: bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
