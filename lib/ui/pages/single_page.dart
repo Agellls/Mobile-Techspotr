@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../controllers/comparison_controller.dart';
 import '../../controllers/single_product_controller.dart';
+import '../../controllers/get_spec_controller.dart';
 import '../../routes/routes_name.dart';
 import '../../shared/app_svg.dart';
 import '../../shared/theme.dart';
@@ -23,6 +24,26 @@ class SinglePage extends StatelessWidget {
     final ComparisonController comparisonController = Get.find();
     final SingleProductController singleController =
         Get.put(SingleProductController());
+    final GetSpecController specController = Get.put(GetSpecController());
+
+    // Add this ScrollController
+    final ScrollController scrollController = ScrollController();
+
+    // Attach listener for infinite scroll
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >=
+          scrollController.position.maxScrollExtent - 100) {
+        // You may want to pass the correct productId and selected specParentId here
+        final args = Get.arguments ?? {};
+        final String productId = args['id'] ?? '';
+        final int selectedTab = singleController.selectedTabIndex.value;
+        final specParents = singleController.specParents;
+        if (specParents.isNotEmpty && selectedTab < specParents.length) {
+          final int specParentId = specParents[selectedTab]['id'];
+          specController.loadMoreSpecifications(productId, specParentId);
+        }
+      }
+    });
 
     final args = Get.arguments ?? {};
     final String productId = args['id'] ?? '';
@@ -31,6 +52,14 @@ class SinglePage extends StatelessWidget {
     if (productId.isNotEmpty) {
       singleController.fetchProductDetails(productId);
     }
+
+    // Fetch specifications for the first tab when data is ready
+    ever(singleController.specParents, (parents) {
+      if (parents.isNotEmpty && specController.specifications.isEmpty) {
+        final firstSpecParent = parents[0];
+        specController.fetchSpecifications(productId, firstSpecParent['id']);
+      }
+    });
 
     final TextEditingController reasonController = TextEditingController();
     final TextEditingController reactController = TextEditingController();
@@ -88,6 +117,7 @@ class SinglePage extends StatelessWidget {
         }
 
         return SingleChildScrollView(
+          controller: scrollController, // <-- Attach controller here
           child: Column(
             children: [
               Row(
@@ -428,7 +458,6 @@ class SinglePage extends StatelessWidget {
                       if (singleController.specParents.isEmpty) {
                         return const SizedBox.shrink();
                       }
-
                       return Stack(
                         children: [
                           SingleChildScrollView(
@@ -442,8 +471,15 @@ class SinglePage extends StatelessWidget {
                                     singleController.selectedTabIndex.value ==
                                         index;
                                 return GestureDetector(
-                                  onTap: () => singleController
-                                      .selectedTabIndex.value = index,
+                                  onTap: () {
+                                    singleController.selectedTabIndex.value =
+                                        index;
+                                    // Fetch specifications for selected tab
+                                    specController.fetchSpecifications(
+                                      productId,
+                                      specParent['id'],
+                                    );
+                                  },
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
@@ -501,229 +537,156 @@ class SinglePage extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                         horizontal: defaultSpace / 2,
                       ),
-                      child: Obx(
-                        () {
-                          switch (comparisonController.selectedTabIndex.value) {
-                            case 0:
-                              return Column(
-                                children: [
-                                  // example content 1
-                                  ComparisonWidget(
-                                    idComparison: 1,
-                                    title: 'Refrigerator Type',
-                                    question:
-                                        'Whats the type of this refigerator ?',
-                                    votes: 21,
-                                    productImage1:
-                                        'https://m-cdn.phonearena.com/images/phones/84862-350/Samsung-Galaxy-S25.webp',
-                                    productName1: 'Samsung Galaxy S25',
-                                    productSpec1: 'QLED',
-                                    productScore1: 90,
-                                    productImage2:
-                                        'https://m-cdn.phonearena.com/images/phones/82890-350/Apple-iPhone-13-Pro-Max.webp',
-                                    productName2: 'Phone in this rangge',
-                                    productSpec2: 'QLED',
-                                    productScore2: 80,
-                                    totalLikes: 17,
-                                    shareUrl: 'https://google.com/',
-                                    reasonController: reasonController,
-                                    reactController: reactController,
-                                    isComparison: false,
+                      child: Obx(() {
+                        // Show loading indicator
+                        if (specController.isLoading.value) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        }
+                        // Show error message
+                        if (specController.hasError.value) {
+                          return Center(
+                            child: Text(
+                              'Failed to load specifications',
+                              style: blackTextStyle,
+                            ),
+                          );
+                        }
+                        // Show specifications from API
+                        if (specController.specifications.isEmpty) {
+                          return Center(
+                            child: Text(
+                              'No specifications available.',
+                              style: blackTextStyle,
+                            ),
+                          );
+                        }
+                        // Render specifications list using ComparisonWidget
+                        return Column(
+                          children: [
+                            ...specController.specifications
+                                .toSet()
+                                .toList()
+                                .asMap()
+                                .entries
+                                .expand((entry) {
+                              final idx = entry.key;
+                              final spec = entry.value;
+                              final compare = spec['compare'];
+                              final List<Widget> widgets = [];
+                              if (compare != null &&
+                                  compare['post'] != null &&
+                                  compare['avg'] != null) {
+                                widgets.add(
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 16),
+                                    child: ComparisonWidget(
+                                      idComparison: spec['id'] ?? 0,
+                                      title: spec['name'] ?? '',
+                                      question: spec['question'] ?? '',
+                                      votes: compare['useful'] ?? 0,
+                                      productImage1:
+                                          singleController.productImage,
+                                      productName1:
+                                          compare['post']['title'] ?? '',
+                                      productSpec1:
+                                          compare['post']['value'] == 1
+                                              ? 'Yes'
+                                              : compare['post']['value'] == 0
+                                                  ? 'No'
+                                                  : (compare['post']['text'] ??
+                                                      compare['post']['value']
+                                                          .toString()),
+                                      productScore1:
+                                          compare['post']['score'] ?? 0,
+                                      productImage2: '',
+                                      productName2:
+                                          compare['avg']['category'] ?? '',
+                                      productSpec2: compare['avg']['value'] == 1
+                                          ? 'Yes'
+                                          : compare['avg']['value'] == 0
+                                              ? 'No'
+                                              : (compare['avg']['text'] ??
+                                                  compare['avg']['value']
+                                                      .toString()),
+                                      productScore2:
+                                          compare['avg']['score'] ?? 0,
+                                      totalLikes: compare['useful'] ?? 0,
+                                      shareUrl: '',
+                                      reasonController: reasonController,
+                                      reactController: reactController,
+                                      isComparison: false,
+                                      usingScores:
+                                          compare['post']['text'] != null,
+                                    ),
                                   ),
+                                );
+                              } else {
+                                widgets.add(
+                                  Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: secondaryColor,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        if (spec['name'] != null)
+                                          Text(
+                                            spec['name'],
+                                            style: blackTextStyle.copyWith(
+                                              fontWeight: extrabold,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                        if (spec['question'] != null)
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 4),
+                                            child: Text(
+                                              spec['question'],
+                                              style: blackTextStyle.copyWith(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                              // Add separator after each item except the last
+                              if (idx <
+                                  specController.specifications.toSet().length -
+                                      1) {
+                                widgets.add(
                                   Container(
                                     margin: const EdgeInsets.symmetric(
                                         vertical: 15),
                                     height: 1,
                                     color: blackColor.withOpacity(0.2),
                                   ),
-
-                                  // example content 2
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Flexible(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Available Colors',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: extrabold,
-                                                color: thirdtyColor,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              'Stainless Steel',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: regular,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              'Fingerprint Resistant Stainless Steel',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: regular,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Flexible(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              'Refrigerant Type',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: extrabold,
-                                                color: thirdtyColor,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              'R-600A',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: regular,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              'R-600A',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: regular,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.symmetric(
-                                        vertical: 15),
-                                    height: 1,
-                                    color: blackColor.withOpacity(0.2),
-                                  ),
-
-                                  // example content 3
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Flexible(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              'Condenser Type',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: extrabold,
-                                                color: thirdtyColor,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              'Air-cooled',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: regular,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              'Air-cooled',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: regular,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Flexible(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              'Door Style Configuration',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: extrabold,
-                                                color: thirdtyColor,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              'Side-by-Side',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: regular,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              'French Door',
-                                              style: blackTextStyle.copyWith(
-                                                fontSize: 14,
-                                                fontWeight: regular,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              );
-                            case 1:
-                              return Row(
-                                children: [
-                                  Text(
-                                    'Performance',
-                                    style: blackTextStyle,
-                                  ),
-                                ],
-                              );
-                            case 2:
-                              return Row(
-                                children: [
-                                  Text(
-                                    'Camera',
-                                    style: blackTextStyle,
-                                  ),
-                                ],
-                              );
-                            case 3:
-                              return Row(
-                                children: [
-                                  Text(
-                                    'Battery',
-                                    style: blackTextStyle,
-                                  ),
-                                ],
-                              );
-                            default:
-                              return const SizedBox.shrink();
-                          }
-                        },
-                      ),
+                                );
+                              }
+                              return widgets;
+                            }).toList(),
+                            // Add loading indicator at the bottom if loading more and has more data
+                            if (specController.isLoadingMore.value &&
+                                specController.hasMoreData.value)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                          ],
+                        );
+                      }),
                     ),
                   ],
                 ),

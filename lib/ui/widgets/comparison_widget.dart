@@ -30,6 +30,7 @@ class ComparisonWidget extends StatelessWidget {
   final bool isComparison;
   final TextEditingController reasonController;
   final TextEditingController reactController;
+  final bool usingScores;
   const ComparisonWidget({
     super.key,
     required this.idComparison,
@@ -49,6 +50,7 @@ class ComparisonWidget extends StatelessWidget {
     required this.reasonController,
     required this.reactController,
     required this.isComparison,
+    this.usingScores = true,
   });
 
   @override
@@ -109,43 +111,49 @@ class ComparisonWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(width: defaultSpace / 2),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  productName1,
-                  style: blackTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: regular,
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    productName1,
+                    style: blackTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: regular,
+                    ),
                   ),
-                ),
-                Text(
-                  productSpec1,
-                  style: blackTextStyle.copyWith(
-                    fontSize: 18,
-                    fontWeight: bold,
+                  Text(
+                    productSpec1,
+                    style: blackTextStyle.copyWith(
+                      fontSize: 18,
+                      fontWeight: bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            const Spacer(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                SvgPicture.string(
-                  AppSvg.scores,
-                  width: 25,
-                  color: Color(0xff84cc16),
-                ),
-                Text(
-                  '$productScore1 Scores',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: bold,
+            if (usingScores) ...[
+              const Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SvgPicture.string(
+                    AppSvg.scores,
+                    width: 25,
+                    color: Color(0xff84cc16),
                   ),
-                ),
-              ],
-            ),
+                  Text(
+                    '$productScore1 Scores',
+                    style: blackTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
         const SizedBox(height: defaultSpace),
@@ -175,43 +183,49 @@ class ComparisonWidget extends StatelessWidget {
                     color: compareColor,
                   ),
             const SizedBox(width: defaultSpace / 2),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  productName2,
-                  style: blackTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: regular,
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$productName2 in this range',
+                    style: blackTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: regular,
+                    ),
                   ),
-                ),
-                Text(
-                  productSpec2,
-                  style: blackTextStyle.copyWith(
-                    fontSize: 18,
-                    fontWeight: bold,
+                  Text(
+                    productSpec2,
+                    style: blackTextStyle.copyWith(
+                      fontSize: 18,
+                      fontWeight: bold,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            const Spacer(),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                SvgPicture.string(
-                  AppSvg.scores,
-                  width: 25,
-                  color: Color(0xffec4899),
-                ),
-                Text(
-                  '$productScore2 Scores',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: bold,
+            if (usingScores) ...[
+              const Spacer(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  SvgPicture.string(
+                    AppSvg.scores,
+                    width: 25,
+                    color: Color(0xffec4899),
                   ),
-                ),
-              ],
-            ),
+                  Text(
+                    '$productScore2 Scores',
+                    style: blackTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
         const SizedBox(height: defaultSpace),
@@ -237,7 +251,16 @@ class ComparisonWidget extends StatelessWidget {
                   ),
                   const SizedBox(width: defaultSpace / 2),
                   Text(
-                    '$totalLikes LIKE',
+                    '$totalLikes',
+                    style: blackTextStyle.copyWith(
+                      fontSize: 12,
+                      fontWeight: bold,
+                      color: whiteColor,
+                    ),
+                  ),
+                  const SizedBox(width: defaultSpace / 2),
+                  Text(
+                    'LIKE',
                     style: blackTextStyle.copyWith(
                       fontSize: 12,
                       fontWeight: bold,

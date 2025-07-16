@@ -76,7 +76,8 @@ class ApiServices {
   Future<Map<String, dynamic>> fetchSinglePost(String postId) async {
     try {
       final headers = {
-        'Cookie': 'tr_session=eyJpdiI6IjM2dk5tYjg0aXROU1RPYXNzSGNhL0E9PSIsInZhbHVlIjoiRldHb29LRlZ4ZEFCZ0NYUVhnbzhwQjB1TUFCRWNaeElXL2xYZnI2c1phdVBiUHlrd0tONko4UXY2VVpKcFlTWSIsIm1hYyI6IjQ4ZjA0MDZmNmY3ZDM2NGZkOTU5Zjk2NmU5ZGRlYTNiN2E5NTlkOGRhZmFjMzJhYzJmZDI1ZjhmNjg2MDMzYTcifQ%3D%3D'
+        'Cookie':
+            'tr_session=eyJpdiI6IjM2dk5tYjg0aXROU1RPYXNzSGNhL0E9PSIsInZhbHVlIjoiRldHb29LRlZ4ZEFCZ0NYUVhnbzhwQjB1TUFCRWNaeElXL2xYZnI2c1phdVBiUHlrd0tONko4UXY2VVpKcFlTWSIsIm1hYyI6IjQ4ZjA0MDZmNmY3ZDM2NGZkOTU5Zjk2NmU5ZGRlYTNiN2E5NTlkOGRhZmFjMzJhYzJmZDI1ZjhmNjg2MDMzYTcifQ%3D%3D'
       };
 
       final response = await dio.request(
@@ -96,7 +97,8 @@ class ApiServices {
         }
         throw Exception('Invalid response format');
       } else {
-        throw Exception('Failed to fetch single post: ${response.statusMessage}');
+        throw Exception(
+            'Failed to fetch single post: ${response.statusMessage}');
       }
     } catch (e) {
       print('Error: $e');
@@ -107,7 +109,8 @@ class ApiServices {
   Future<Map<String, dynamic>> fetchProductHighlights(String postId) async {
     try {
       final headers = {
-        'Cookie': 'tr_session=eyJpdiI6ImNIYTBXejZsYVNnek1WT3RQK3d4OXc9PSIsInZhbHVlIjoiWVNNNjZteUJhaGZpaVpvSUlkaEN5Q2o2aS9sS2l4OG0xMmRNV1lTTnd3NC9RY0EzeCtRR0lucUFsZGJ3eXZEZSIsIm1hYyI6IjQyYmNlNjdjOTIwOGRiNjYwZjhlOGEyMWM2NjJmZWUwMDJiZGYzNjAwN2U3ODJhN2Q4MDViZTEyYTZiMjIxMGYifQ%3D%3D'
+        'Cookie':
+            'tr_session=eyJpdiI6ImNIYTBXejZsYVNnek1WT3RQK3d4OXc9PSIsInZhbHVlIjoiWVNNNjZteUJhaGZpaVpvSUlkaEN5Q2o2aS9sS2l4OG0xMmRNV1lTTnd3NC9RY0EzeCtRR0lucUFsZGJ3eXZEZSIsIm1hYyI6IjQyYmNlNjdjOTIwOGRiNjYwZjhlOGEyMWM2NjJmZWUwMDJiZGYzNjAwN2U3ODJhN2Q4MDViZTEyYTZiMjIxMGYifQ%3D%3D'
       };
 
       final response = await dio.request(
@@ -127,12 +130,50 @@ class ApiServices {
         }
         throw Exception('Invalid highlights response format');
       } else {
-        throw Exception('Failed to fetch product highlights: ${response.statusMessage}');
+        throw Exception(
+            'Failed to fetch product highlights: ${response.statusMessage}');
       }
     } catch (e) {
       print('Highlights Error: $e');
       // Don't throw error here, just return empty data so basic product info still shows
       return {};
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchSpecifications(
+      String postId, int specParentId,
+      {int limit = 3}) async {
+    try {
+      final url =
+          '$baseUrl/post/$postId/specification/$specParentId?limit=$limit';
+      print('Fetching specifications from: $url');
+
+      final response = await dio.request(
+        url,
+        options: Options(
+          method: 'GET',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print(
+            'Specifications Response (Limit $limit): ${json.encode(response.data)}');
+
+        final data = response.data;
+        if (data['status'] == true && data['data'] != null) {
+          final specifications = List<Map<String, dynamic>>.from(data['data']);
+          print('Parsed ${specifications.length} specifications from API');
+          return specifications;
+        }
+        print('No data found in response');
+        return [];
+      } else {
+        throw Exception(
+            'Failed to fetch specifications: ${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Specifications Error: $e');
+      throw Exception('Error fetching specifications: $e');
     }
   }
 }
