@@ -7,7 +7,19 @@ import '../../utilities/loading.dart';
 
 class ArticlesWidget extends StatelessWidget {
   final Color mainColor;
-  const ArticlesWidget({super.key, required this.mainColor});
+  final String title;
+  final String timeLine;
+  final String imageUrl;
+  final String urlSourceName;
+
+  const ArticlesWidget({
+    super.key,
+    required this.mainColor,
+    required this.title,
+    required this.timeLine,
+    required this.imageUrl,
+    required this.urlSourceName,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +61,7 @@ class ArticlesWidget extends StatelessWidget {
                   ),
                   child: ClipOval(
                     child: CachedNetworkImage(
-                      imageUrl:
-                          'https://www.rankcdn.com/cdn-cgi/image/quality=90,onerror=redirect,format=webp,fit=cover,width=360,height=360/techspotr.com/tcl.jpg',
+                      imageUrl: imageUrl,
                       width: 40,
                       height: 40,
                       fit: BoxFit.cover,
@@ -79,7 +90,7 @@ class ArticlesWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text(
-                    'TCL',
+                    urlSourceName,
                     style: whiteTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: semibold,
@@ -94,7 +105,7 @@ class ArticlesWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    'LG LRSOS2706S Owners Manual',
+                    title, // Use the passed title
                     style: blackTextStyle.copyWith(
                       fontSize: 16,
                       fontWeight: bold,
@@ -104,7 +115,7 @@ class ArticlesWidget extends StatelessWidget {
                     textAlign: TextAlign.end,
                   ),
                   Text(
-                    '1 Month Ago',
+                    timeLine, // Use the passed timeLine
                     style: blackTextStyle.copyWith(
                       fontSize: 12,
                       fontWeight: light,

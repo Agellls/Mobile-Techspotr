@@ -176,4 +176,37 @@ class ApiServices {
       throw Exception('Error fetching specifications: $e');
     }
   }
+
+  /// Fetch guides (file, article, video) for a given postId and type
+  Future<List<Map<String, dynamic>>> fetchGuides({
+    required int postId,
+    required String type, // 'file', 'article', or 'video'
+    List<int>? notIds,
+  }) async {
+    try {
+      String url = '$baseUrl/guide/$postId/$type';
+      if (notIds != null && notIds.isNotEmpty) {
+        for (var id in notIds) {
+          url += '&not_id[]=$id';
+        }
+      }
+      final response = await dio.request(
+        url,
+        options: Options(method: 'GET'),
+      );
+      if (response.statusCode == 200) {
+        print('Guides Response: ${json.encode(response.data)}');
+        final data = response.data;
+        if (data['status'] == true && data['data'] != null) {
+          return List<Map<String, dynamic>>.from(data['data']);
+        }
+        return [];
+      } else {
+        throw Exception(response.statusMessage ?? 'Unknown error');
+      }
+    } catch (e) {
+      print('Error fetching guides: $e');
+      throw Exception('Error fetching guides: $e');
+    }
+  }
 }

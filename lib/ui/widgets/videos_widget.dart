@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../../shared/theme.dart';
-
 class VideosWidget extends StatelessWidget {
   final Color mainColor;
-  const VideosWidget({super.key, required this.mainColor});
+  final String imageUrl;
+  const VideosWidget(
+      {super.key, required this.mainColor, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,10 @@ class VideosWidget extends StatelessWidget {
       height: 100,
       width: 100,
       decoration: BoxDecoration(
-        color: secondaryColor,
+        image: DecorationImage(
+          image: NetworkImage(imageUrl),
+          fit: BoxFit.cover,
+        ),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: mainColor,

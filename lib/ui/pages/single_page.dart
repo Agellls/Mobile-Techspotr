@@ -265,7 +265,13 @@ class SinglePage extends StatelessWidget {
                           child: OpsiButton(
                             iconSvg: AppSvg.guide,
                             text: 'Guides',
-                            ontap: () => Get.toNamed(RouteName.guides),
+                            ontap: () => Get.toNamed(
+                              RouteName.guides,
+                              arguments: {
+                                'postId': productId,
+                                'productName': singleController.productName,
+                              },
+                            ),
                           ),
                         ),
                         const SizedBox(width: 10),
