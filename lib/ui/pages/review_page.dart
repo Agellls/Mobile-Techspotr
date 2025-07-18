@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controllers/reviews_menu_controller.dart';
+import 'package:flutter_application_1/controllers/get_review_controller.dart';
 import 'package:flutter_application_1/shared/theme.dart';
 import 'package:flutter_application_1/ui/widgets/review_widget.dart';
 import 'package:flutter_application_1/ui/widgets/total_rating.dart';
@@ -13,9 +14,25 @@ class ReviewPage extends StatelessWidget {
 
   final ReviewsMenuController reviewsMenuController =
       Get.put(ReviewsMenuController());
+  final GetReviewController getReviewController =
+      Get.put(GetReviewController());
 
   @override
   Widget build(BuildContext context) {
+    final ScrollController reviewScrollController = ScrollController();
+
+    // Infinite scroll listener
+    reviewScrollController.addListener(() {
+      final args = Get.arguments ?? {};
+      final int? postId = args['postId'] is int
+          ? args['postId']
+          : int.tryParse('${args['postId'] ?? ''}');
+      if (reviewScrollController.position.pixels >=
+          reviewScrollController.position.maxScrollExtent - 100) {
+        getReviewController.loadMoreReviews(postId);
+      }
+    });
+
     return Container(
       color: primaryColor,
       child: SafeArea(
@@ -275,15 +292,37 @@ class ReviewPage extends StatelessWidget {
                       ),
                     ],
                   )
-                : Expanded(
-                    child: ListView.separated(
-                      itemCount: 5,
+                : Obx(() {
+                    final args = Get.arguments ?? {};
+                    final int? postId = args['postId'] is int
+                        ? args['postId']
+                        : int.tryParse('${args['postId'] ?? ''}');
+                    if (getReviewController.reviews.isEmpty &&
+                        !getReviewController.isLoading.value &&
+                        !getReviewController.hasError.value) {
+                      getReviewController.fetchReviews(postId);
+                    }
+                    if (getReviewController.isLoading.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (getReviewController.hasError.value) {
+                      return Center(child: Text('Failed to load reviews'));
+                    }
+                    // +1 for header (TotalRating)
+                    final itemCount = getReviewController.reviews.length + 1;
+                    // Only add extra item if loading more or if there could be more data
+                    final showExtraItem =
+                        getReviewController.isLoadingMore.value ||
+                            getReviewController.hasMore.value;
+                    return ListView.separated(
+                      controller: reviewScrollController,
+                      itemCount: itemCount + (showExtraItem ? 1 : 0),
                       separatorBuilder: (context, index) => const SizedBox(),
                       itemBuilder: (context, index) {
                         if (index == 0) {
+                          // Header: TotalRating
                           return Column(
                             children: [
-                              // total rating
                               TotalRating(
                                 mainColor: thirdtyColor,
                                 compareItems: const [
@@ -303,19 +342,40 @@ class ReviewPage extends StatelessWidget {
                                   },
                                 ],
                               ),
-                              const SizedBox(height: defaultSpace / 2),
-                              ReviewsWidget(
-                                mainColor: thirdtyColor,
-                              ),
+                              const SizedBox(height: defaultSpace),
                             ],
                           );
                         }
+                        // Loading or "No more reviews" indicator at the end
+                        if (showExtraItem && index == itemCount) {
+                          if (getReviewController.isLoadingMore.value) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            );
+                          } else if (!getReviewController.hasMore.value &&
+                              getReviewController.reviews.isNotEmpty) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              child: Center(
+                                child: Text('No more reviews'),
+                              ),
+                            );
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        }
+                        // Review item
+                        final review = getReviewController.reviews[index - 1];
                         return ReviewsWidget(
                           mainColor: thirdtyColor,
+                          review: review,
                         );
                       },
-                    ),
-                  ),
+                    );
+                  }),
           ),
         ),
       ),

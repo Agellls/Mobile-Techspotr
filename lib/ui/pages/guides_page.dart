@@ -22,12 +22,12 @@ class _GuidesPageState extends State<GuidesPage> {
       Get.put(GuidesMenuController());
   final GetGuideController guideController = Get.put(GetGuideController());
   final args = Get.arguments ?? {};
-  final String postId = Get.arguments?['postId'];
+  final int postId = Get.arguments?['postId'];
 
   @override
   void initState() {
     super.initState();
-    guideController.fetchAllGuides(postId: int.tryParse(postId) ?? 0);
+    guideController.fetchAllGuides(postId: postId);
   }
 
   @override

@@ -21,7 +21,6 @@ class SinglePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ComparisonController comparisonController = Get.find();
     final SingleProductController singleController =
         Get.put(SingleProductController());
     final GetSpecController specController = Get.put(GetSpecController());
@@ -268,7 +267,7 @@ class SinglePage extends StatelessWidget {
                             ontap: () => Get.toNamed(
                               RouteName.guides,
                               arguments: {
-                                'postId': productId,
+                                'postId': int.tryParse(productId),
                                 'productName': singleController.productName,
                               },
                             ),
@@ -281,7 +280,11 @@ class SinglePage extends StatelessWidget {
                             text: 'Reviews',
                             ontap: () => Get.toNamed(
                               RouteName.review,
-                              arguments: {'isCompare': false},
+                              arguments: {
+                                'isCompare': false,
+                                'postId': int.tryParse(productId),
+                                'productName': singleController.productName,
+                              },
                             ),
                           ),
                         ),

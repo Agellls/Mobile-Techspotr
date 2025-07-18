@@ -209,4 +209,39 @@ class ApiServices {
       throw Exception('Error fetching guides: $e');
     }
   }
+
+  Future<List<Map<String, dynamic>>> fetchReviews({
+    required int postId,
+    int limit = 3,
+    List<int>? notIds,
+    String sort = 'recently',
+  }) async {
+    try {
+      String url = '$baseUrl/review?post_id=$postId&limit=$limit&sort=$sort';
+      if (notIds != null && notIds.isNotEmpty) {
+        for (var id in notIds) {
+          url += '&not_id[]=$id';
+        }
+      }
+      final response = await dio.request(
+        url,
+        options: Options(
+          method: 'GET',
+        ),
+      );
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['status'] == true && data['data'] != null) {
+          // Fix: Use data['data'] directly, not data['data']['results']
+          return List<Map<String, dynamic>>.from(data['data']);
+        }
+        return [];
+      } else {
+        throw Exception('Failed to fetch reviews: ${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Error fetching reviews: $e');
+      throw Exception('Error fetching reviews: $e');
+    }
+  }
 }

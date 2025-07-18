@@ -19,16 +19,23 @@ class ReviewsWidgetController extends GetxController {
 
 class ReviewsWidget extends StatelessWidget {
   final Color mainColor;
-  ReviewsWidget({super.key, required this.mainColor});
+  final Map<String, dynamic>? review;
+  ReviewsWidget({super.key, required this.mainColor, this.review});
 
-  final List<String> tags = [
-    'LG',
-    'Smart TV',
-    'OLED',
-    '4K',
-    'Gaming',
-    'Home Theater',
-  ];
+  // Use tags from review if available
+  List<String> getTags() {
+    if (review == null) return [];
+    final tags = review!['tags'];
+    if (tags == null) return [];
+    if (tags is List) {
+      return tags.map((e) => e['name'] as String).toList();
+    }
+    if (tags is Map) {
+      return tags.values.map((e) => e['name'] as String).toList();
+    }
+    return [];
+  }
+
   final TextEditingController reasonController = TextEditingController();
   final ReviewsWidgetController reviewsWidgetController =
       Get.put(ReviewsWidgetController());
@@ -62,7 +69,7 @@ class ReviewsWidget extends StatelessWidget {
             children: [
               ClipOval(
                 child: CachedNetworkImage(
-                  imageUrl:
+                  imageUrl: review?['user']?['image'] ??
                       'https://wallpapers.com/images/featured-full/cool-profile-picture-87h46gcobjl5e4xu.jpg',
                   width: 50,
                   height: 50,
@@ -85,14 +92,14 @@ class ReviewsWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'John Doe',
+                    review?['user']?['name'] ?? 'John Doe',
                     style: blackTextStyle.copyWith(
                       fontSize: 18,
                       fontWeight: bold,
                     ),
                   ),
                   Text(
-                    '1 Reviews',
+                    '${review?['user']?['total_review'] ?? '1'} Reviews',
                     style: blackTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: regular,
@@ -106,7 +113,7 @@ class ReviewsWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '2 days ago',
+                    review?['create_time_elapsed'] ?? '2 days ago',
                     style: blackTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: regular,
@@ -121,7 +128,7 @@ class ReviewsWidget extends StatelessWidget {
                         size: 23,
                       ),
                       Text(
-                        '5',
+                        '${review?['rating'] ?? '5'}',
                         style: blackTextStyle.copyWith(
                           fontSize: 16,
                           fontWeight: bold,
@@ -137,7 +144,7 @@ class ReviewsWidget extends StatelessWidget {
           // review content
           const SizedBox(height: defaultSpace),
           Text(
-            'LG is the brand you can trust',
+            review?['title'] ?? 'LG is the brand you can trust',
             style: blackTextStyle.copyWith(
               fontSize: 16,
               fontWeight: bold,
@@ -145,7 +152,8 @@ class ReviewsWidget extends StatelessWidget {
           ),
           const SizedBox(height: defaultSpace / 2),
           Text(
-            'Sunt occaecat duis eiusmod mollit elit ex fugiat veniam commodo non. Fugiat do sint veniam officia deserunt exercitation aliqua. Laborum enim enim do do ullamco. Fugiat consectetur magna in ut amet cupidatat aliqua.',
+            review?['content'] ??
+                'Sunt occaecat duis eiusmod mollit elit ex fugiat veniam commodo non. Fugiat do sint veniam officia deserunt exercitation aliqua. Laborum enim enim do do ullamco. Fugiat consectetur magna in ut amet cupidatat aliqua.',
             style: blackTextStyle.copyWith(
               fontSize: 14,
               fontWeight: regular,
@@ -175,8 +183,12 @@ class ReviewsWidget extends StatelessWidget {
                                 fontWeight: bold,
                               ),
                             ),
-                            ...buildBulletedList(['test', 'keren'],
-                                isPositive: true),
+                            ...buildBulletedList(
+                              (review?['pros'] as List<dynamic>? ?? [])
+                                  .where((e) => (e as String).isNotEmpty)
+                                  .toList(),
+                              isPositive: true,
+                            ),
                           ],
                         ),
                       ),
@@ -192,8 +204,12 @@ class ReviewsWidget extends StatelessWidget {
                                 fontWeight: bold,
                               ),
                             ),
-                            ...buildBulletedList(['not good la', 'technologia'],
-                                isPositive: false),
+                            ...buildBulletedList(
+                              (review?['cons'] as List<dynamic>? ?? [])
+                                  .where((e) => (e as String).isNotEmpty)
+                                  .toList(),
+                              isPositive: false,
+                            ),
                           ],
                         ),
                       ),
@@ -327,14 +343,13 @@ class ReviewsWidget extends StatelessWidget {
                   const SizedBox(height: defaultSpace),
                   Column(
                     children: [
-                      if (tags.isNotEmpty) ...[
+                      if (getTags().isNotEmpty) ...[
                         const SizedBox(height: defaultSpace / 2),
                         Wrap(
-                          spacing: 5, // horizontal spacing between tags
-                          runSpacing:
-                              5, // vertical spacing between lines of tags
+                          spacing: 5,
+                          runSpacing: 5,
                           children: [
-                            for (var tag in tags)
+                            for (var tag in getTags())
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 5, horizontal: 10),
