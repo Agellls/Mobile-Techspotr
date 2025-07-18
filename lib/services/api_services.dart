@@ -244,4 +244,30 @@ class ApiServices {
       throw Exception('Error fetching reviews: $e');
     }
   }
+
+  /// Fetch review attributes for a given postId
+  Future<Map<String, dynamic>> fetchReviewAttributes(int postId) async {
+    try {
+      final response = await dio.request(
+        '$baseUrl/$postId/review/attributes',
+        options: Options(
+          method: 'GET',
+        ),
+      );
+      if (response.statusCode == 200) {
+        print(json.encode(response.data));
+        final data = response.data;
+        if (data['status'] == true && data['data'] != null) {
+          return data['data'];
+        }
+        throw Exception('Invalid review attributes response format');
+      } else {
+        throw Exception(
+            'Failed to fetch review attributes: ${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Error fetching review attributes: $e');
+      throw Exception('Error fetching review attributes: $e');
+    }
+  }
 }

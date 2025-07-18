@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controllers/reviews_menu_controller.dart';
 import 'package:flutter_application_1/controllers/get_review_controller.dart';
+import 'package:flutter_application_1/controllers/get_attribute_controller.dart';
 import 'package:flutter_application_1/shared/theme.dart';
 import 'package:flutter_application_1/ui/widgets/review_widget.dart';
 import 'package:flutter_application_1/ui/widgets/total_rating.dart';
@@ -16,6 +17,8 @@ class ReviewPage extends StatelessWidget {
       Get.put(ReviewsMenuController());
   final GetReviewController getReviewController =
       Get.put(GetReviewController());
+  final GetAttributeController getAttributeController =
+      Get.put(GetAttributeController());
 
   @override
   Widget build(BuildContext context) {
@@ -297,20 +300,52 @@ class ReviewPage extends StatelessWidget {
                     final int? postId = args['postId'] is int
                         ? args['postId']
                         : int.tryParse('${args['postId'] ?? ''}');
+                    // Fetch attributes if not loaded
+                    if (getAttributeController.attributes.isEmpty &&
+                        !getAttributeController.isLoading.value &&
+                        !getAttributeController.hasError.value &&
+                        postId != null) {
+                      getAttributeController.fetchAttributes(postId);
+                    }
+                    // Fetch reviews if not loaded
                     if (getReviewController.reviews.isEmpty &&
                         !getReviewController.isLoading.value &&
                         !getReviewController.hasError.value) {
                       getReviewController.fetchReviews(postId);
                     }
-                    if (getReviewController.isLoading.value) {
+                    if (getReviewController.isLoading.value ||
+                        getAttributeController.isLoading.value) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    if (getReviewController.hasError.value) {
-                      return Center(child: Text('Failed to load reviews'));
+                    if (getReviewController.hasError.value ||
+                        getAttributeController.hasError.value) {
+                      return Center(
+                          child: Text('Failed to load reviews or attributes'));
+                    }
+                    // Prepare compareItems for TotalRating from attributes
+                    final attr = getAttributeController.attributes;
+                    List<Map<String, dynamic>> compareItems = [];
+                    if (attr.isNotEmpty) {
+                      final attributesList =
+                          attr['attributes'] as List<dynamic>? ?? [];
+                      compareItems.add({
+                        'rating': attr['avg_rating'].toString(),
+                        'reviewCount': attributesList.isNotEmpty
+                            ? (attributesList[0]['total_review'].toString())
+                            : '0',
+                        'attributes': attributesList, // pass the full list
+                      });
+                    } else {
+                      compareItems = const [
+                        {
+                          'rating': '0',
+                          'reviewCount': '0',
+                          'attributes': [],
+                        },
+                      ];
                     }
                     // +1 for header (TotalRating)
                     final itemCount = getReviewController.reviews.length + 1;
-                    // Only add extra item if loading more or if there could be more data
                     final showExtraItem =
                         getReviewController.isLoadingMore.value ||
                             getReviewController.hasMore.value;
@@ -325,22 +360,7 @@ class ReviewPage extends StatelessWidget {
                             children: [
                               TotalRating(
                                 mainColor: thirdtyColor,
-                                compareItems: const [
-                                  {
-                                    'compareName1': 'Dimensions & Weight',
-                                    'compareName2': 'Capacity',
-                                    'compareName3': 'Refrigerator',
-                                    'compareName4': 'Features',
-                                    'compareName5': 'Freezer',
-                                    'compareValue1': '4.5',
-                                    'compareValue2': '4.0',
-                                    'compareValue3': '5',
-                                    'compareValue4': '3.5',
-                                    'compareValue5': '4.0',
-                                    'rating': '4.4',
-                                    'reviewCount': '150',
-                                  },
-                                ],
+                                compareItems: compareItems,
                               ),
                               const SizedBox(height: defaultSpace),
                             ],
