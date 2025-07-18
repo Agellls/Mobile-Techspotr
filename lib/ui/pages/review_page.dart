@@ -319,7 +319,7 @@ class ReviewPage extends StatelessWidget {
                     }
                     if (getReviewController.hasError.value ||
                         getAttributeController.hasError.value) {
-                      return Center(
+                      return const Center(
                           child: Text('Failed to load reviews or attributes'));
                     }
                     // Prepare compareItems for TotalRating from attributes
@@ -362,7 +362,7 @@ class ReviewPage extends StatelessWidget {
                                 mainColor: thirdtyColor,
                                 compareItems: compareItems,
                               ),
-                              const SizedBox(height: defaultSpace),
+                              const SizedBox(height: defaultSpace / 2),
                             ],
                           );
                         }

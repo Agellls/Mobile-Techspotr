@@ -299,7 +299,11 @@ class SinglePage extends StatelessWidget {
                             text: 'Discussions',
                             ontap: () => Get.toNamed(
                               RouteName.discuss,
-                              arguments: {'isCompare': false},
+                              arguments: {
+                                'isCompare': false,
+                                'postId': int.tryParse(productId),
+                                'productName': singleController.productName,
+                              },
                             ),
                           ),
                         ),

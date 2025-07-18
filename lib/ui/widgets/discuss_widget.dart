@@ -20,22 +20,21 @@ class DiscussWidgetController extends GetxController {
 
 class DiscussWidget extends StatelessWidget {
   final Color mainColor;
-  DiscussWidget({super.key, required this.mainColor});
+  final Map<String, dynamic> discussion;
+  DiscussWidget({super.key, required this.mainColor, required this.discussion});
 
-  final List<String> tags = [
-    'LG',
-    'Smart TV',
-    'OLED',
-    '4K',
-    'Gaming',
-    'Home Theater',
-  ];
   final DiscussWidgetController discussWidgetController =
       Get.put(DiscussWidgetController());
   final TextEditingController reasonController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final user = discussion['user'] ?? {};
+    final tags = (discussion['tags'] as List?)
+            ?.map((e) => e['name']?.toString() ?? '')
+            .where((t) => t.isNotEmpty)
+            .toList() ??
+        [];
     return Container(
       margin: const EdgeInsets.only(bottom: defaultSpace),
       padding: const EdgeInsets.all(defaultSpace),
@@ -60,8 +59,8 @@ class DiscussWidget extends StatelessWidget {
             children: [
               ClipOval(
                 child: CachedNetworkImage(
-                  imageUrl:
-                      'https://wallpapers.com/images/featured-full/cool-profile-picture-87h46gcobjl5e4xu.jpg',
+                  imageUrl: user['image'] ??
+                      'https://icons.veryicon.com/png/o/business/new-vision-2/picture-loading-failed-1.png',
                   width: 50,
                   height: 50,
                   fit: BoxFit.cover,
@@ -83,14 +82,14 @@ class DiscussWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'John Doe',
+                    user['name']?.toString() ?? '-',
                     style: blackTextStyle.copyWith(
                       fontSize: 18,
                       fontWeight: bold,
                     ),
                   ),
                   Text(
-                    '1 Discussions',
+                    '${user['total_discuss'] ?? 0} Discussions',
                     style: blackTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: regular,
@@ -104,7 +103,7 @@ class DiscussWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '2 days ago',
+                    discussion['create_time_elapsed']?.toString() ?? '',
                     style: blackTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: regular,
@@ -119,7 +118,7 @@ class DiscussWidget extends StatelessWidget {
                         size: 23,
                       ),
                       Text(
-                        '5',
+                        (discussion['total_child'] ?? 0).toString(),
                         style: blackTextStyle.copyWith(
                           fontSize: 16,
                           fontWeight: bold,
@@ -135,7 +134,7 @@ class DiscussWidget extends StatelessWidget {
           // discuss content
           const SizedBox(height: defaultSpace),
           Text(
-            'How to change the water filter?',
+            discussion['title']?.toString() ?? '',
             style: blackTextStyle.copyWith(
               fontSize: 16,
               fontWeight: bold,
@@ -144,7 +143,7 @@ class DiscussWidget extends StatelessWidget {
           if (discussWidgetController.isFullDiscuss.value) ...[
             const SizedBox(height: defaultSpace / 2),
             Text(
-              'Sunt occaecat duis eiusmod mollit elit ex fugiat veniam commodo non. Fugiat do sint veniam officia deserunt exercitation aliqua. Laborum enim enim do do ullamco. Fugiat consectetur magna in ut amet cupidatat aliqua.',
+              discussion['content']?.toString() ?? '',
               style: blackTextStyle.copyWith(
                 fontSize: 14,
                 fontWeight: regular,
@@ -223,6 +222,7 @@ class DiscussWidget extends StatelessWidget {
                     onTap: () {
                       Get.toNamed(RouteName.discussReply, arguments: {
                         'mainColor': mainColor,
+                        'discussion': discussion,
                       });
                     },
                     child: Container(
@@ -253,7 +253,7 @@ class DiscussWidget extends StatelessWidget {
                 children: [
                   GestureDetector(
                     onTap: () => Share.share(
-                        'Check this out, agellls has write discussion in troupon. you can view more here https://troupon.com/discuss/'),
+                        'Check this out, ${user['name'] ?? ''} has written a discussion in Techspotr. View more here https://techspotr.com/discuss/${discussion['id']}'),
                     child: Container(
                       color: primaryColor,
                       child: Icon(
@@ -266,7 +266,9 @@ class DiscussWidget extends StatelessWidget {
                   const SizedBox(width: 10),
                   GestureDetector(
                     onTap: () => Get.bottomSheet(
-                      ReportWidget(reasonController: reasonController, id: 1),
+                      ReportWidget(
+                          reasonController: reasonController,
+                          id: discussion['id'] ?? 1),
                       isScrollControlled: true,
                     ),
                     child: Container(

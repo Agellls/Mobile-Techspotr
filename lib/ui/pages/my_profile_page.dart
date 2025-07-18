@@ -64,15 +64,39 @@ class MyProfile extends StatelessWidget {
               const SizedBox(height: defaultSpace),
               DiscussWidget(
                 mainColor: thirdtyColor,
+                discussion: {
+                  'title': 'Comparison Discussion',
+                  'content': 'Content for comparison',
+                  'author': 'Author',
+                  'date': DateTime.now().toString(),
+                },
               ),
               DiscussWidget(
                 mainColor: thirdtyColor,
+                discussion: {
+                  'title': 'Comparison Discussion',
+                  'content': 'Content for comparison',
+                  'author': 'Author',
+                  'date': DateTime.now().toString(),
+                },
               ),
               DiscussWidget(
                 mainColor: thirdtyColor,
+                discussion: {
+                  'title': 'Comparison Discussion',
+                  'content': 'Content for comparison',
+                  'author': 'Author',
+                  'date': DateTime.now().toString(),
+                },
               ),
               DiscussWidget(
                 mainColor: thirdtyColor,
+                discussion: {
+                  'title': 'Comparison Discussion',
+                  'content': 'Content for comparison',
+                  'author': 'Author',
+                  'date': DateTime.now().toString(),
+                },
               ),
               SizedBox(height: defaultSpace),
             ],

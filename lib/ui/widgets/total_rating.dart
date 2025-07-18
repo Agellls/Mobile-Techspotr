@@ -150,7 +150,7 @@ class TotalRating extends StatelessWidget {
                 ],
               ),
             );
-          }).toList(),
+          }),
           const SizedBox(height: defaultSpace / 2),
         ],
       ),

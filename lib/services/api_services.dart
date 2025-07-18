@@ -270,4 +270,43 @@ class ApiServices {
       throw Exception('Error fetching review attributes: $e');
     }
   }
+
+  /// Fetch discussions for a given postId
+  Future<List<Map<String, dynamic>>> fetchDiscussions({
+    required int postId,
+    List<int>? notIds,
+    String sort = 'recently',
+    int limit = 10,
+    int page = 1,
+  }) async {
+    try {
+      String url =
+          '$baseUrl/discuss?post_id=$postId&sort=$sort&limit=$limit&page=$page';
+      if (notIds != null && notIds.isNotEmpty) {
+        for (var id in notIds) {
+          url += '&not_id[]=$id';
+        }
+      }
+      final response = await dio.request(
+        url,
+        options: Options(
+          method: 'GET',
+        ),
+      );
+      if (response.statusCode == 200) {
+        print('Discussions Response: \\${json.encode(response.data)}');
+        final data = response.data;
+        if (data['status'] == true && data['data'] != null) {
+          return List<Map<String, dynamic>>.from(data['data']);
+        }
+        return [];
+      } else {
+        throw Exception(
+            'Failed to fetch discussions: \\${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Error fetching discussions: \\${e}');
+      throw Exception('Error fetching discussions: \\${e}');
+    }
+  }
 }

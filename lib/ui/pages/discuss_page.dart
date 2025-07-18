@@ -1,3 +1,4 @@
+import 'package:flutter_application_1/controllers/get_discussion_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controllers/discussion_menu_controller.dart';
 import 'package:flutter_application_1/ui/widgets/discuss_widget.dart';
@@ -8,6 +9,9 @@ import '../../shared/theme.dart';
 import '../widgets/search_forms.dart';
 
 class DiscussPage extends StatelessWidget {
+  final ScrollController _scrollController = ScrollController();
+  final GetDiscussionController discussionController =
+      Get.put(GetDiscussionController());
   final bool isCompare;
   DiscussPage({super.key, required this.isCompare});
 
@@ -18,6 +22,25 @@ class DiscussPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Example: get postId from arguments or use a default
+    final args = Get.arguments ?? {};
+    final int postId = args['postId'];
+
+    // Fetch discussions when the widget is built (only once)
+    if (discussionController.discussions.isEmpty &&
+        !discussionController.isLoading.value) {
+      discussionController.fetchDiscussions(postId: postId);
+    }
+
+    // Infinite scroll listener
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 200 &&
+          !discussionController.isLoadingMore.value &&
+          discussionController.hasMore.value) {
+        discussionController.loadMoreDiscussions(postId: postId);
+      }
+    });
     return Container(
       color: primaryColor,
       child: SafeArea(
@@ -191,6 +214,14 @@ class DiscussPage extends StatelessWidget {
                                       ),
                                       DiscussWidget(
                                         mainColor: thirdtyColor,
+                                        discussion: {
+                                          'title':
+                                              'Comparison Discussion $index',
+                                          'content':
+                                              'Content for comparison $index',
+                                          'author': 'Author $index',
+                                          'date': DateTime.now().toString(),
+                                        }, // Example discussion data
                                       ),
                                     ],
                                   ),
@@ -201,6 +232,12 @@ class DiscussPage extends StatelessWidget {
                                     horizontal: defaultSpace),
                                 child: DiscussWidget(
                                   mainColor: thirdtyColor,
+                                  discussion: {
+                                    'title': 'Comparison Discussion $index',
+                                    'content': 'Content for comparison $index',
+                                    'author': 'Author $index',
+                                    'date': DateTime.now().toString(),
+                                  }, // Example discussion data
                                 ),
                               );
                             },
@@ -225,6 +262,14 @@ class DiscussPage extends StatelessWidget {
                                       ),
                                       DiscussWidget(
                                         mainColor: compareColor,
+                                        discussion: {
+                                          'title':
+                                              'Comparison Discussion $index',
+                                          'content':
+                                              'Content for comparison $index',
+                                          'author': 'Author $index',
+                                          'date': DateTime.now().toString(),
+                                        }, // Example discussion data
                                       ),
                                     ],
                                   ),
@@ -235,6 +280,12 @@ class DiscussPage extends StatelessWidget {
                                     horizontal: defaultSpace),
                                 child: DiscussWidget(
                                   mainColor: compareColor,
+                                  discussion: {
+                                    'title': 'Comparison Discussion $index',
+                                    'content': 'Content for comparison $index',
+                                    'author': 'Author $index',
+                                    'date': DateTime.now().toString(),
+                                  }, // Example discussion data
                                 ),
                               );
                             },
@@ -246,35 +297,58 @@ class DiscussPage extends StatelessWidget {
                   },
                 ),
               ] else ...[
-                // If not compare, show only DiscussWidget
+                // If not compare, show real discussions from API
                 Expanded(
-                  child: ListView.separated(
-                    itemCount: 5,
-                    separatorBuilder: (context, index) => const SizedBox(),
-                    itemBuilder: (context, index) {
-                      if (index == 4) {
-                        // Last item, add space below
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: defaultSpace),
-                          child: Column(
-                            children: [
-                              DiscussWidget(
+                  child: Obx(() {
+                    if (discussionController.isLoading.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (discussionController.errorMessage.isNotEmpty) {
+                      return Center(
+                          child: Text(discussionController.errorMessage.value));
+                    } else if (discussionController.discussions.isEmpty) {
+                      return const Center(child: Text('No discussions found.'));
+                    }
+                    return NotificationListener<ScrollNotification>(
+                      onNotification: (scrollNotification) {
+                        if (scrollNotification is ScrollEndNotification &&
+                            _scrollController.position.pixels >=
+                                _scrollController.position.maxScrollExtent -
+                                    200 &&
+                            !discussionController.isLoadingMore.value &&
+                            discussionController.hasMore.value) {
+                          discussionController.loadMoreDiscussions(
+                              postId: postId);
+                        }
+                        return false;
+                      },
+                      child: ListView.separated(
+                        controller: _scrollController,
+                        itemCount: discussionController.discussions.length +
+                            (discussionController.isLoadingMore.value ? 1 : 0),
+                        separatorBuilder: (context, index) => const SizedBox(),
+                        itemBuilder: (context, index) {
+                          if (index < discussionController.discussions.length) {
+                            final discussion =
+                                discussionController.discussions[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: defaultSpace),
+                              child: DiscussWidget(
                                 mainColor: thirdtyColor,
+                                discussion: discussion,
                               ),
-                            ],
-                          ),
-                        );
-                      }
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: defaultSpace),
-                        child: DiscussWidget(
-                          mainColor: thirdtyColor,
-                        ),
-                      );
-                    },
-                  ),
+                            );
+                          } else {
+                            // Loading indicator at the bottom
+                            return const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                        },
+                      ),
+                    );
+                  }),
                 ),
               ],
             ],
