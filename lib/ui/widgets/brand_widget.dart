@@ -66,7 +66,7 @@ class BrandWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: defaultSpace / 2),
+                const SizedBox(width: defaultSpace),
                 Text(
                   brandName,
                   style: blackTextStyle.copyWith(

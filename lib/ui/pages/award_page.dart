@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controllers/award_menu_controller.dart';
 import 'package:flutter_application_1/ui/widgets/award_widget.dart';
 import 'package:get/get.dart';
-
+import '../../controllers/get_award_controller.dart';
 import '../../shared/theme.dart';
 
 class AwardPage extends StatelessWidget {
@@ -13,9 +13,16 @@ class AwardPage extends StatelessWidget {
   final FocusNode searchFocusNode = FocusNode();
   late final AwardMenuController awardMenuController =
       Get.put(AwardMenuController());
+  final GetAwardController getAwardController = Get.put(GetAwardController());
 
   @override
   Widget build(BuildContext context) {
+    final args = Get.arguments ?? {};
+    final int postId = args['postId'] ?? 0;
+    final int userId = args['userId'] ?? 0;
+
+    getAwardController.fetchAwards(postId: postId);
+
     return Container(
       color: primaryColor,
       child: SafeArea(
@@ -173,7 +180,7 @@ class AwardPage extends StatelessWidget {
                           case 1:
                             return Expanded(
                               child: ListView.separated(
-                                itemCount: 10,
+                                itemCount: 2,
                                 separatorBuilder: (context, index) =>
                                     const SizedBox(),
                                 itemBuilder: (context, index) {
@@ -208,39 +215,35 @@ class AwardPage extends StatelessWidget {
                     ),
                   ],
                 )
-              : Column(
-                  children: [
-                    Expanded(
-                      child: ListView.separated(
-                        itemCount: 10,
-                        separatorBuilder: (context, index) => const SizedBox(),
-                        itemBuilder: (context, index) {
-                          if (index == 0) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: defaultSpace),
-                              child: Column(
-                                children: [
-                                  const SizedBox(height: defaultSpace),
-                                  AwardWidget(
-                                    mainColor: thirdtyColor,
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: defaultSpace),
-                            child: AwardWidget(
-                              mainColor: thirdtyColor,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+              : Obx(() {
+                  if (getAwardController.isLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  if (getAwardController.error.isNotEmpty) {
+                    return Center(child: Text(getAwardController.error.value));
+                  }
+                  final awards = getAwardController.awards;
+                  if (awards.isEmpty) {
+                    return const Center(child: Text('No awards found.'));
+                  }
+                  return ListView.separated(
+                    itemCount: awards.length,
+                    separatorBuilder: (context, index) => const SizedBox(),
+                    itemBuilder: (context, index) {
+                      final award = awards[index];
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: defaultSpace),
+                        child: AwardWidget(
+                          mainColor: thirdtyColor,
+                          award: award,
+                          ontap: null,
+                          ontapRoute: null,
+                        ),
+                      );
+                    },
+                  );
+                }),
         ),
       ),
     );

@@ -18,12 +18,13 @@ class GetDiscussionController extends GetxController {
     discussions.clear();
   }
 
-  Future<void> loadMoreDiscussions({required int postId}) async {
+  Future<void> loadMoreDiscussions(
+      {required int postId, String? keyword}) async {
     if (isLoadingMore.value || !hasMore.value) return;
     isLoadingMore.value = true;
     try {
-      final result =
-          await apiServices.fetchDiscussions(postId: postId, page: page + 1);
+      final result = await apiServices.fetchDiscussions(
+          postId: postId, page: page + 1, keyword: keyword);
       if (result.isNotEmpty) {
         page++;
         discussions.addAll(result);
@@ -43,6 +44,7 @@ class GetDiscussionController extends GetxController {
     String sort = 'recently',
     int limit = 10,
     int page = 1,
+    String? keyword,
   }) async {
     isLoading.value = true;
     errorMessage.value = '';
@@ -55,6 +57,7 @@ class GetDiscussionController extends GetxController {
         sort: sort,
         limit: limit,
         page: page,
+        keyword: keyword,
       );
       discussions.value = result;
       hasMore.value = result.length == limit;

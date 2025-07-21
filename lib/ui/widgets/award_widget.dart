@@ -6,103 +6,122 @@ import '../../shared/app_svg.dart';
 
 class AwardWidget extends StatelessWidget {
   final Color mainColor;
-  const AwardWidget({super.key, required this.mainColor});
+  final Map<String, dynamic>? award;
+  final VoidCallback? ontap;
+  final VoidCallback? ontapRoute;
+
+  const AwardWidget({
+    super.key,
+    required this.mainColor,
+    this.award,
+    this.ontap,
+    this.ontapRoute,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: defaultSpace),
-      width: double.infinity,
-      height: 110,
-      decoration: BoxDecoration(
-        color: whiteColor,
-        borderRadius: const BorderRadius.all(
-          Radius.circular(defaultSpace),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: blackColor.withOpacity(0.3),
-            blurRadius: 2,
-            offset: const Offset(0, 1),
+    final int totalLikes = award?['total_useful'] ?? 0;
+    final String title = award?['title'] ?? '';
+    final String subtitle = award?['teaser_text'] ?? '';
+
+    return GestureDetector(
+      onTap: ontapRoute,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: defaultSpace),
+        width: double.infinity,
+        height: 110,
+        decoration: BoxDecoration(
+          color: whiteColor,
+          borderRadius: const BorderRadius.all(
+            Radius.circular(defaultSpace),
           ),
-        ],
-      ),
-      child: // Content
-          Padding(
-        padding: const EdgeInsets.all(defaultSpace),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xffbe185d),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: const Color(0xffec4899),
-                      width: 2,
-                    ),
-                  ),
-                  child: SvgPicture.string(
-                    AppSvg.liked,
-                    width: 20,
-                    color: whiteColor,
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 5,
-                    vertical: 2,
-                  ),
-                  decoration: BoxDecoration(
-                    color: mainColor,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Text(
-                    '0 Likes',
-                    style: whiteTextStyle.copyWith(
-                      fontSize: 14,
-                      fontWeight: semibold,
-                    ),
-                  ),
-                ),
-              ],
+          boxShadow: [
+            BoxShadow(
+              color: blackColor.withOpacity(0.3),
+              blurRadius: 2,
+              offset: const Offset(0, 1),
             ),
-            Expanded(
-              child: Column(
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(defaultSpace),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'BEST COUNTER-DEPTH REFRIGERATORS',
-                    style: blackTextStyle.copyWith(
-                      fontSize: 16,
-                      fontWeight: bold,
+                  GestureDetector(
+                    onTap: ontap,
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffbe185d),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: const Color(0xffec4899),
+                          width: 2,
+                        ),
+                      ),
+                      child: SvgPicture.string(
+                        AppSvg.liked,
+                        width: 20,
+                        color: whiteColor,
+                      ),
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.end,
                   ),
-                  Text(
-                    '8 Champs & 3 Wannabes — Counter-Depth or Counter-Drama?',
-                    style: blackTextStyle.copyWith(
-                      fontSize: 12,
-                      fontWeight: light,
+                  const SizedBox(height: 5),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 2,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: TextAlign.end,
+                    decoration: BoxDecoration(
+                      color: mainColor,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Text(
+                      '$totalLikes Likes',
+                      style: whiteTextStyle.copyWith(
+                        fontSize: 14,
+                        fontWeight: semibold,
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      title,
+                      style: blackTextStyle.copyWith(
+                        fontSize: 16,
+                        fontWeight: bold,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                    ),
+                    Text(
+                      subtitle,
+                      style: blackTextStyle.copyWith(
+                        fontSize: 12,
+                        fontWeight: light,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.end,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

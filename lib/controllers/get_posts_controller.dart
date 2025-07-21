@@ -27,7 +27,8 @@ class GetPostsController extends GetxController {
     fetchPosts();
   }
 
-  Future<void> fetchPosts({bool isRefresh = false, int? categoryId}) async {
+  Future<void> fetchPosts(
+      {bool isRefresh = false, int? categoryId, String? keyword}) async {
     try {
       if (isRefresh) {
         currentPage.value = 1;
@@ -45,6 +46,7 @@ class GetPostsController extends GetxController {
       final apiPosts = await _apiServices.fetchPopularPosts(
         page: currentPage.value,
         categoryId: catId > 0 ? catId : null,
+        keyword: keyword ?? searchQuery.value,
       );
 
       // Map API response to expected format
@@ -145,9 +147,15 @@ class GetPostsController extends GetxController {
     filteredPosts.assignAll(allPosts);
   }
 
-  void filterPosts(String query) {
+  Future<void> filterPosts(String query) async {
     searchQuery.value = query;
-    _applySearchFilter();
+    // If query is empty, fetch all posts (no keyword)
+    if (query.isEmpty) {
+      await fetchPosts(isRefresh: true);
+    } else {
+      await fetchPosts(isRefresh: true, keyword: query);
+    }
+    // _applySearchFilter(); // Already called in fetchPosts
   }
 
   // Add this method to clear search

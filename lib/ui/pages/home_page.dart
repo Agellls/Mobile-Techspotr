@@ -42,14 +42,14 @@ class HomePage extends StatelessWidget {
   // Add this variable to track search state
   final RxBool isSearching = false.obs;
 
-  // Filter products based on search query
-  void filterProducts(String query) {
+  // Filter products based on search query (now async)
+  Future<void> filterProducts(String query) async {
     isSearching.value = query.isNotEmpty;
-    getPostsController.filterPosts(query);
+    await getPostsController.filterPosts(query);
   }
 
   // Add clear search method
-  void clearSearch() {
+  Future<void> clearSearch() async {
     // Force clear the text controller
     searchController.text = '';
     searchController.clear();
@@ -57,6 +57,8 @@ class HomePage extends StatelessWidget {
     getPostsController.clearSearch();
     // Update local search state
     isSearching.value = false;
+    // Fetch all posts again
+    await getPostsController.fetchPosts(isRefresh: true);
   }
 
   @override
@@ -145,11 +147,11 @@ class HomePage extends StatelessWidget {
                                           controller: searchController,
                                           focusNode: searchFocusNode,
                                           isSearch: true,
-                                          onChanged: (value) {
-                                            filterProducts(value);
+                                          onChanged: (value) async {
+                                            await filterProducts(value);
                                           },
-                                          onClearPressed: () {
-                                            clearSearch();
+                                          onClearPressed: () async {
+                                            await clearSearch();
                                             FocusScope.of(context).unfocus();
                                           },
                                         ),

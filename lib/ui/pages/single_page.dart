@@ -5,7 +5,6 @@ import 'package:shimmer/shimmer.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../controllers/comparison_controller.dart';
 import '../../controllers/single_product_controller.dart';
 import '../../controllers/get_spec_controller.dart';
 import '../../routes/routes_name.dart';
@@ -312,17 +311,44 @@ class SinglePage extends StatelessWidget {
                           child: OpsiButton(
                             iconSvg: AppSvg.award,
                             text: 'Awards',
-                            ontap: () => Get.toNamed(RouteName.award),
+                            ontap: () =>
+                                Get.toNamed(RouteName.award, arguments: {
+                              'isCompare': false,
+                              'postId': int.tryParse(productId),
+                              'productName': singleController.productName,
+                            }),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 10),
-                    OpsiButton(
-                      iconSvg: AppSvg.compare,
-                      text: 'Comparisons',
-                      fullWidth: true,
-                      ontap: () => Get.toNamed(RouteName.moreCompare),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OpsiButton(
+                            iconSvg: AppSvg.collection,
+                            text: 'Collections',
+                            fullWidth: true,
+                            ontap: () => Get.toNamed(
+                              RouteName.collection,
+                              arguments: {
+                                'isCompare': false,
+                                'postId': int.tryParse(productId),
+                                'productName': singleController.productName,
+                              },
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: OpsiButton(
+                            iconSvg: AppSvg.compare,
+                            text: 'Comparisons',
+                            fullWidth: true,
+                            ontap: () => Get.toNamed(RouteName.moreCompare),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

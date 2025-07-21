@@ -9,13 +9,19 @@ class ApiServices {
   // final authCon = get_package.Get.find<AuthController>();
   final String baseUrl = 'http://192.168.1.77/techspotr/api';
 
-  Future<List<Map<String, dynamic>>> fetchPopularPosts(
-      {int page = 1, int? categoryId}) async {
+  Future<List<Map<String, dynamic>>> fetchPopularPosts({
+    int page = 1,
+    int? categoryId,
+    String? keyword,
+  }) async {
     try {
-      // Build URL with optional category_id parameter
+      // Build URL with optional category_id and keyword parameter
       String url = '$baseUrl/post?sort_by=popular&limit=6&page=$page';
       if (categoryId != null && categoryId > 0) {
         url += '&category_id=$categoryId';
+      }
+      if (keyword != null && keyword.isNotEmpty) {
+        url += '&keyword=${Uri.encodeComponent(keyword)}';
       }
 
       final response = await dio.request(
@@ -278,6 +284,7 @@ class ApiServices {
     String sort = 'recently',
     int limit = 10,
     int page = 1,
+    String? keyword,
   }) async {
     try {
       String url =
@@ -286,6 +293,9 @@ class ApiServices {
         for (var id in notIds) {
           url += '&not_id[]=$id';
         }
+      }
+      if (keyword != null && keyword.isNotEmpty) {
+        url += '&keyword=${Uri.encodeComponent(keyword)}';
       }
       final response = await dio.request(
         url,
@@ -307,6 +317,84 @@ class ApiServices {
     } catch (e) {
       print('Error fetching discussions: \\${e}');
       throw Exception('Error fetching discussions: \\${e}');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchCollections({
+    int? postId,
+    String? keyword,
+    int? userId,
+  }) async {
+    try {
+      String url = '$baseUrl/collection?';
+      if (postId != null) {
+        url += 'post_id=$postId&';
+      }
+      if (keyword != null && keyword.isNotEmpty) {
+        url += 'keyword=${Uri.encodeComponent(keyword)}&';
+      }
+      if (userId != null) {
+        url += 'user_id=$userId&';
+      }
+      url = url.endsWith('&') ? url.substring(0, url.length - 1) : url;
+
+      final response = await dio.request(
+        url,
+        options: Options(
+          method: 'GET',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        print(json.encode(response.data));
+        final data = response.data;
+        if (data['status'] == true && data['data'] != null) {
+          return List<Map<String, dynamic>>.from(data['data']);
+        }
+        return [];
+      } else {
+        throw Exception(
+            'Failed to fetch collections: ${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Error fetching collections: $e');
+      throw Exception('Error fetching collections: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchAwards({
+    required int postId,
+    int limit = 7,
+    String sort = 'recently',
+    List<int>? notIds,
+  }) async {
+    try {
+      String url = '$baseUrl/award?post_id=$postId&limit=$limit&sort=$sort';
+      if (notIds != null && notIds.isNotEmpty) {
+        for (var id in notIds) {
+          url += '&not_id[]=$id';
+        }
+      }
+      final response = await dio.request(
+        url,
+        options: Options(
+          method: 'GET',
+        ),
+      );
+      if (response.statusCode == 200) {
+        print(json.encode(response.data));
+        final data = response.data;
+        if (data['status'] == true && data['data'] != null) {
+          return List<Map<String, dynamic>>.from(data['data']);
+        }
+        return [];
+      } else {
+        print(response.statusMessage);
+        throw Exception('Failed to fetch awards: ${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Error fetching awards: $e');
+      throw Exception('Error fetching awards: $e');
     }
   }
 }

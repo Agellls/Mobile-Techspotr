@@ -26,6 +26,9 @@ class DiscussPage extends StatelessWidget {
     final args = Get.arguments ?? {};
     final int postId = args['postId'];
 
+    // Track the current search keyword
+    final RxString searchKeyword = ''.obs;
+
     // Fetch discussions when the widget is built (only once)
     if (discussionController.discussions.isEmpty &&
         !discussionController.isLoading.value) {
@@ -38,7 +41,8 @@ class DiscussPage extends StatelessWidget {
               _scrollController.position.maxScrollExtent - 200 &&
           !discussionController.isLoadingMore.value &&
           discussionController.hasMore.value) {
-        discussionController.loadMoreDiscussions(postId: postId);
+        discussionController.loadMoreDiscussions(
+            postId: postId, keyword: searchKeyword.value);
       }
     });
     return Container(
@@ -97,9 +101,18 @@ class DiscussPage extends StatelessWidget {
                     controller: searchController,
                     focusNode: searchFocusNode,
                     isSearch: true,
-                    onChanged: (value) {},
-                    onClearPressed: () {
+                    onChanged: (value) async {
+                      searchKeyword.value = value;
+                      await discussionController.fetchDiscussions(
+                        postId: postId,
+                        keyword: value,
+                      );
+                    },
+                    onClearPressed: () async {
                       searchController.clear();
+                      searchKeyword.value = '';
+                      await discussionController.fetchDiscussions(
+                          postId: postId);
                       FocusScope.of(context).unfocus();
                     },
                   ),

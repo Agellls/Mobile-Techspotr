@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:line_icons/line_icons.dart';
@@ -725,6 +726,44 @@ class ProfilePage extends StatelessWidget {
                                   const SizedBox(width: 10),
                                   Text(
                                     'Security',
+                                    style: blackTextStyle.copyWith(
+                                      fontSize: 14,
+                                      fontWeight: regular,
+                                    ),
+                                  ),
+                                  const Spacer(),
+                                  Icon(Icons.arrow_right, color: thirdtyColor),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Divider(
+                            color: primaryColor,
+                            thickness: 2,
+                            height: defaultSpace / 2,
+                          ),
+                          GestureDetector(
+                            onTap: () => Get.toNamed(
+                              RouteName.collection,
+                              arguments: {
+                                'isCompare': false,
+                                'userId': 1,
+                                'productName': 'tivi',
+                              },
+                            ),
+                            child: Container(
+                              color: secondaryColor,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: defaultSpace,
+                                vertical: defaultSpace / 2,
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(CupertinoIcons.heart_fill,
+                                      color: thirdtyColor),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    'Collection',
                                     style: blackTextStyle.copyWith(
                                       fontSize: 14,
                                       fontWeight: regular,
