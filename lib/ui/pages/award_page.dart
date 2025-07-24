@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controllers/award_menu_controller.dart';
+import 'package:flutter_application_1/routes/routes_name.dart';
 import 'package:flutter_application_1/ui/widgets/award_widget.dart';
 import 'package:get/get.dart';
 import '../../controllers/get_award_controller.dart';
@@ -238,7 +239,7 @@ class AwardPage extends StatelessWidget {
                           mainColor: thirdtyColor,
                           award: award,
                           ontap: null,
-                          ontapRoute: null,
+                          ontapRoute: () => Get.toNamed(RouteName.singleAward),
                         ),
                       );
                     },

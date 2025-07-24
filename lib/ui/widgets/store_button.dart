@@ -20,6 +20,8 @@ class StoreButton extends StatelessWidget {
   final double price;
   final String currency;
   final VoidCallback? onTap;
+  final Color mainColor;
+  final Color textColor;
   final StoreButtonController controller = StoreButtonController();
 
   StoreButton({
@@ -28,6 +30,8 @@ class StoreButton extends StatelessWidget {
     required this.price,
     required this.currency,
     this.onTap,
+    this.mainColor = const Color(0xfff2f1f4),
+    this.textColor = const Color(0xff000000),
   });
 
   @override
@@ -44,7 +48,7 @@ class StoreButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(
               horizontal: defaultSpace, vertical: defaultSpace / 2),
           decoration: BoxDecoration(
-            color: secondaryColor,
+            color: mainColor,
             borderRadius: BorderRadius.circular(100),
           ),
           child: Row(
@@ -78,6 +82,7 @@ class StoreButton extends StatelessWidget {
                     style: blackTextStyle.copyWith(
                       fontWeight: bold,
                       fontSize: 12,
+                      color: textColor,
                     ),
                   ),
                   Obx(
@@ -88,6 +93,7 @@ class StoreButton extends StatelessWidget {
                       textStyle: blackTextStyle.copyWith(
                         fontWeight: bold,
                         fontSize: 12,
+                        color: textColor,
                       ),
                     ),
                   ),

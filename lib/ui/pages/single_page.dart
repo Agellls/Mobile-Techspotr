@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/ui/widgets/button_widget.dart';
 import 'package:flutter_radar_chart/flutter_radar_chart.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:get/get.dart';
@@ -118,6 +119,36 @@ class SinglePage extends StatelessWidget {
           controller: scrollController, // <-- Attach controller here
           child: Column(
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ButtonWidget(
+                    bgColor: thirdtyColor,
+                    bgActiveColor: activeColor,
+                    text: 'I WANT',
+                    icon: AppSvg.iwant,
+                    isActive: true,
+                    totalReaction: 4,
+                  ),
+                  ButtonWidget(
+                    bgColor: thirdtyColor,
+                    bgActiveColor: activeColor,
+                    text: 'I HAVE',
+                    icon: AppSvg.ihave,
+                    isActive: false,
+                    totalReaction: 2,
+                  ),
+                  ButtonWidget(
+                    bgColor: thirdtyColor,
+                    bgActiveColor: activeColor,
+                    text: 'I HAD',
+                    icon: AppSvg.ihad,
+                    isActive: false,
+                    totalReaction: 1,
+                  ),
+                ],
+              ),
+              const SizedBox(height: defaultSpace / 2),
               Row(
                 children: [
                   const SizedBox(width: defaultSpace / 2),

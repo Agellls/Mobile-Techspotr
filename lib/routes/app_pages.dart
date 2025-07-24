@@ -1,5 +1,6 @@
 import 'package:flutter_application_1/shared/theme.dart';
 import 'package:flutter_application_1/ui/pages/award_page.dart';
+import 'package:flutter_application_1/ui/pages/award_single_page.dart';
 import 'package:flutter_application_1/ui/pages/brand_detail_page.dart';
 import 'package:flutter_application_1/ui/pages/collection_page.dart';
 import 'package:flutter_application_1/ui/pages/compare_page.dart';
@@ -144,6 +145,14 @@ class AppPages {
       name: RouteName.singleCollection,
       page: () {
         return SingleCollectionPage();
+      },
+      transition: Transition.leftToRight,
+      showCupertinoParallax: false,
+    ),
+    GetPage(
+      name: RouteName.singleAward,
+      page: () {
+        return AwardSinglePage();
       },
       transition: Transition.leftToRight,
       showCupertinoParallax: false,

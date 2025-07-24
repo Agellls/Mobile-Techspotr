@@ -74,9 +74,10 @@ class WriteCollectionPage extends StatelessWidget {
         foregroundColor: blackColor,
         surfaceTintColor: Colors.transparent,
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: defaultSpace),
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(
+              left: defaultSpace, right: defaultSpace, bottom: defaultSpace),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -322,7 +323,6 @@ class WriteCollectionPage extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: defaultSpace),
             ],
           ),
         ),
