@@ -12,6 +12,7 @@ import '../../shared/theme.dart';
 import '../../utilities/loading.dart';
 
 class CollectionWidget extends StatelessWidget {
+  final int idCollection;
   final String imageProfileUrl;
   final String profileName;
   final int totalCollection;
@@ -23,6 +24,7 @@ class CollectionWidget extends StatelessWidget {
   final String title;
   const CollectionWidget({
     super.key,
+    required this.idCollection,
     required this.imageProfileUrl,
     required this.profileName,
     required this.totalCollection,
@@ -99,6 +101,7 @@ class CollectionWidget extends StatelessWidget {
                 GestureDetector(
                   onTap: () =>
                       Get.toNamed(RouteName.singleCollection, arguments: {
+                    'collectionId': idCollection,
                     'profileImageUrl': imageProfileUrl,
                     'profileName': profileName,
                     'totalCollection': totalCollection,

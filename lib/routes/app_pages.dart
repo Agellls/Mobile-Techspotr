@@ -14,7 +14,7 @@ import 'package:flutter_application_1/ui/pages/my_profile_page.dart';
 import 'package:flutter_application_1/ui/pages/personal_page.dart';
 import 'package:flutter_application_1/ui/pages/register_page.dart';
 import 'package:flutter_application_1/ui/pages/review_page.dart';
-import 'package:flutter_application_1/ui/pages/single_collection_page.dart';
+import 'package:flutter_application_1/ui/pages/collection_single_page.dart';
 import 'package:flutter_application_1/ui/pages/single_page.dart';
 import 'package:flutter_application_1/ui/pages/write_discuss_page.dart';
 import 'package:flutter_application_1/ui/pages/write_review_page.dart';

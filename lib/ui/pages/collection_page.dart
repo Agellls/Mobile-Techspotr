@@ -86,6 +86,7 @@ class CollectionPage extends StatelessWidget {
                       final user = collection['user'] ?? {};
                       final showcase = collection['post_showcase'] ?? [];
                       return CollectionWidget(
+                        idCollection: collection['id'] ?? 0,
                         imageProfileUrl: user['image'] ?? '',
                         profileName: user['name'] ?? '',
                         totalCollection: user['total_collection'] ?? 0,

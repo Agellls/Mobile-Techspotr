@@ -12,7 +12,31 @@ import '../../utilities/loading.dart';
 import 'store_button.dart';
 
 class AwardSingleDetailWidget extends StatelessWidget {
-  const AwardSingleDetailWidget({super.key});
+  final int index;
+  final String imageUrl;
+  final String productName;
+  final String subtitle;
+  final String content;
+  final int totalScore;
+  final String brandName;
+  final String brandLogoUrl;
+  final List<dynamic> prices;
+  final List<String> pros;
+  final List<String> cons;
+  const AwardSingleDetailWidget({
+    super.key,
+    required this.index,
+    required this.imageUrl,
+    required this.productName,
+    required this.subtitle,
+    required this.content,
+    required this.totalScore,
+    required this.brandName,
+    required this.brandLogoUrl,
+    required this.prices,
+    required this.pros,
+    required this.cons,
+  });
 
   final bool isEmpty = false;
 
@@ -32,7 +56,7 @@ class AwardSingleDetailWidget extends StatelessWidget {
           ),
           child: Center(
             child: Text(
-              '1',
+              index.toString(),
               style: whiteTextStyle.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: 24,
@@ -48,7 +72,7 @@ class AwardSingleDetailWidget extends StatelessWidget {
         ),
         const SizedBox(height: defaultSpace / 2),
         Text(
-          'Samsung S8273828973',
+          productName,
           style: blackTextStyle.copyWith(
             fontSize: 18,
             fontWeight: bold,
@@ -57,7 +81,7 @@ class AwardSingleDetailWidget extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         Text(
-          'Best Overall',
+          subtitle,
           style: blackTextStyle.copyWith(
             fontSize: 24,
             fontWeight: extrabold,
@@ -90,7 +114,7 @@ class AwardSingleDetailWidget extends StatelessWidget {
               bgActiveColor: activeColor,
               text: 'I WANT',
               icon: AppSvg.iwant,
-              isActive: true,
+              isActive: false,
               totalReaction: 4,
             ),
             ButtonWidget(
@@ -116,8 +140,7 @@ class AwardSingleDetailWidget extends StatelessWidget {
           children: [
             const SizedBox(width: defaultSpace / 2),
             CachedNetworkImage(
-              imageUrl:
-                  'https://www.rankcdn.com/cdn-cgi/image/quality=90,onerror=redirect,format=webp,fit=cover,width=700/techspotr.com/untitled-3.png',
+              imageUrl: imageUrl,
               width: 70,
               height: 70,
               fit: BoxFit.cover,
@@ -140,7 +163,7 @@ class AwardSingleDetailWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Samsung S43534',
+                    productName,
                     style: blackTextStyle.copyWith(
                       fontWeight: bold,
                       fontSize: 18,
@@ -150,7 +173,7 @@ class AwardSingleDetailWidget extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    '9.2 Scores',
+                    '$totalScore Scores',
                     style: blackTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: regular,
@@ -176,8 +199,7 @@ class AwardSingleDetailWidget extends StatelessWidget {
                 ),
                 child: ClipOval(
                   child: CachedNetworkImage(
-                    imageUrl:
-                        'https://www.rankcdn.com/cdn-cgi/image/quality=90,onerror=redirect,format=webp,fit=cover,width=64,height=64/techspotr.com/samsung-logo.png',
+                    imageUrl: brandLogoUrl,
                     width: 30,
                     height: 30,
                     fit: BoxFit.cover,
@@ -196,51 +218,46 @@ class AwardSingleDetailWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: defaultSpace / 2),
-              Expanded(
-                child: Text(
-                  'Samsung',
-                  style: blackTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: extrabold,
+              if (prices.length <= 2)
+                Expanded(
+                  child: Text(
+                    brandName,
+                    style: blackTextStyle.copyWith(
+                      fontSize: 16,
+                      fontWeight: extrabold,
+                    ),
                   ),
-                ),
-              ),
-              if (1 == 1) ...[
-                StoreButton(
-                  logoUrl:
-                      'https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://www.amazon.com&size=128',
-                  price: 342.00,
-                  currency: '\$',
-                  onTap: () async {
-                    // if (singleController.productPriceLinks.isNotEmpty) {
-                    //   final url = singleController.productPriceLinks[0];
-                    //   if (url.isNotEmpty &&
-                    //       await canLaunchUrl(Uri.parse(url))) {
-                    //     await launchUrl(Uri.parse(url),
-                    //         mode: LaunchMode.externalApplication);
-                    //   }
-                    // }
-                  },
-                ),
-                const SizedBox(width: 10),
-                if (2 == 2)
-                  StoreButton(
-                    logoUrl:
-                        'https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://www.amazon.com&size=128',
-                    price: 523.00,
-                    currency: '\$',
-                    onTap: () async {
-                      // if (singleController.productPriceLinks.length > 1) {
-                      //   final url = singleController.productPriceLinks[1];
-                      //   if (url.isNotEmpty &&
-                      //       await canLaunchUrl(Uri.parse(url))) {
-                      //     await launchUrl(Uri.parse(url),
-                      //         mode: LaunchMode.externalApplication);
-                      //   }
-                      // }
-                    },
-                  ),
-              ],
+                )
+              else
+                const Spacer(),
+              // Loop StoreButton for each price
+              ...prices.map((price) {
+                final priceValue = (price['price'] is num)
+                    ? (price['price'] as num).toDouble()
+                    : 0.0;
+                final link = price['link'] ?? '';
+                String domain = '';
+                try {
+                  domain = Uri.parse(link).host;
+                } catch (_) {
+                  domain = '';
+                }
+                final logoUrl =
+                    'https://t2.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://$domain&size=128';
+                return Row(
+                  children: [
+                    StoreButton(
+                      logoUrl: logoUrl,
+                      price: priceValue,
+                      currency: '\$',
+                      onTap: () async {
+                        // Add your logic for launching the price link if needed
+                      },
+                    ),
+                    if (price != prices.last) const SizedBox(width: 10),
+                  ],
+                );
+              }),
             ],
           ),
         ),
@@ -314,7 +331,11 @@ class AwardSingleDetailWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: defaultSpace),
-        AwardTextWidget(),
+        AwardTextWidget(
+          content: content,
+          pros: pros,
+          cons: cons,
+        ),
         const SizedBox(height: defaultSpace),
       ],
     );

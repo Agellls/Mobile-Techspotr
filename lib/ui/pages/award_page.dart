@@ -216,35 +216,39 @@ class AwardPage extends StatelessWidget {
                     ),
                   ],
                 )
-              : Obx(() {
-                  if (getAwardController.isLoading.value) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (getAwardController.error.isNotEmpty) {
-                    return Center(child: Text(getAwardController.error.value));
-                  }
-                  final awards = getAwardController.awards;
-                  if (awards.isEmpty) {
-                    return const Center(child: Text('No awards found.'));
-                  }
-                  return ListView.separated(
-                    itemCount: awards.length,
-                    separatorBuilder: (context, index) => const SizedBox(),
-                    itemBuilder: (context, index) {
-                      final award = awards[index];
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: defaultSpace),
-                        child: AwardWidget(
-                          mainColor: thirdtyColor,
-                          award: award,
-                          ontap: null,
-                          ontapRoute: () => Get.toNamed(RouteName.singleAward),
-                        ),
-                      );
-                    },
-                  );
-                }),
+              : Obx(
+                  () {
+                    if (getAwardController.isLoading.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    if (getAwardController.error.isNotEmpty) {
+                      return Center(
+                          child: Text(getAwardController.error.value));
+                    }
+                    final awards = getAwardController.awards;
+                    if (awards.isEmpty) {
+                      return const Center(child: Text('No awards found.'));
+                    }
+                    return ListView.separated(
+                      itemCount: awards.length,
+                      separatorBuilder: (context, index) => const SizedBox(),
+                      itemBuilder: (context, index) {
+                        final award = awards[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: defaultSpace),
+                          child: AwardWidget(
+                            mainColor: thirdtyColor,
+                            award: award,
+                            ontap: null,
+                            ontapRoute: () =>
+                                Get.toNamed(RouteName.singleAward),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
         ),
       ),
     );

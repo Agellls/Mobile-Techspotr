@@ -15,6 +15,8 @@ class SingleProducts extends StatefulWidget {
   final double productRating;
   final String brandName;
   final String brandImage;
+  final bool isCanSingle; // <-- add this line
+
   const SingleProducts({
     super.key,
     required this.id,
@@ -25,6 +27,7 @@ class SingleProducts extends StatefulWidget {
     required this.productRating,
     required this.brandName,
     required this.brandImage,
+    this.isCanSingle = true, // <-- default true
   });
 
   @override
@@ -47,6 +50,7 @@ class _SingleProductsState extends State<SingleProducts> {
         productRating: widget.productRating,
         brandName: widget.brandName,
         brandImage: widget.brandImage,
+        isCanSingle: widget.isCanSingle, // <-- pass down
         onDragStarted: () {
           setState(() {
             _isDragging = true;
@@ -73,6 +77,7 @@ class _AnimatedShadowCard extends StatefulWidget {
   final double productRating;
   final String brandName;
   final String brandImage;
+  final bool isCanSingle; // <-- add this line
 
   const _AnimatedShadowCard({
     required this.onDragStarted,
@@ -85,6 +90,7 @@ class _AnimatedShadowCard extends StatefulWidget {
     required this.productRating,
     required this.brandName,
     required this.brandImage,
+    this.isCanSingle = true, // <-- default true
   });
 
   @override
@@ -93,10 +99,11 @@ class _AnimatedShadowCard extends StatefulWidget {
 
 class _AnimatedShadowCardState extends State<_AnimatedShadowCard> {
   void _goToSinglePage(BuildContext context) {
+    if (!widget.isCanSingle) return; // <-- block navigation if false
     Get.toNamed(
       RouteName.single,
       arguments: {
-        'id': widget.id, // Make sure this is passed correctly
+        'id': widget.id,
         'productName': widget.productName,
         'productPrice': widget.productPrice,
         'productPriceImages': widget.productPriceImages,

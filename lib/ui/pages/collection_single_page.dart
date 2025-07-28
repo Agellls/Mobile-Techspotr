@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../../controllers/collection_single_controller.dart';
 import '../../controllers/comparison_controller.dart';
 import '../../routes/routes_name.dart';
 import '../../shared/theme.dart';
@@ -20,16 +21,27 @@ class SingleCollectionPage extends StatelessWidget {
   final FocusNode searchFocusNode = FocusNode();
   final ComparisonController comparisonController =
       Get.put(ComparisonController());
-
-  // GetX reactive drag state
+  final CollectionSingleController collectionController =
+      Get.put(CollectionSingleController());
   final RxInt dragOverSlot = (-1).obs;
   final RxBool isDragInProgress = false.obs;
-  final String profileImageUrl = Get.arguments['profileImageUrl'] ?? '';
-  final String profileName = Get.arguments['profileName'] ?? '';
-  final int totalCollection = Get.arguments['totalProduct'] ?? 0;
+
+  // Use a static Set to track fetched collections (prevents multiple fetches)
+  static final Set<int> _fetchedIds = {};
 
   @override
   Widget build(BuildContext context) {
+    final args = Get.arguments ?? {};
+    final int collectionId = args['collectionId'] ?? 5;
+    final String profileImageUrl = args['profileImageUrl'] ?? '';
+    final String profileName = args['profileName'] ?? '';
+
+    // Only fetch once per collectionId
+    if (!_fetchedIds.contains(collectionId)) {
+      collectionController.fetchSingleCollection(collectionId);
+      _fetchedIds.add(collectionId);
+    }
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -109,10 +121,13 @@ class SingleCollectionPage extends StatelessWidget {
                       controller: searchController,
                       focusNode: searchFocusNode,
                       isSearch: true,
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        collectionController.filterItems(value);
+                      },
                       onClearPressed: () {
                         searchController.clear();
                         FocusScope.of(context).unfocus();
+                        collectionController.clearSearch();
                       },
                     ),
                   ),
@@ -144,123 +159,46 @@ class SingleCollectionPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: defaultSpace),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: defaultSpace / 2),
-                    child: FlexibleWrap(
-                      spacing: defaultSpace,
-                      runSpacing: defaultSpace,
-                      isOneRowExpanded: true,
-                      children: [
-                        SingleProducts(
-                          id: '1',
-                          productName: 'Samsung Galaxy S25',
-                          productImage:
-                              'https://m-cdn.phonearena.com/images/phones/84862-350/Samsung-Galaxy-S25.webp',
-                          productRating: 8.3,
-                          productPrice: [
-                            999.99,
-                            100.88,
-                          ],
-                          productPriceImages: [
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://buywiseappliances.co.uk&size=128',
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://buywiseappliances.co.uk&size=128',
-                          ],
-                          brandImage:
-                              'https://brandlogos.net/wp-content/uploads/2014/08/samsung-logo-preview-400x400.png',
-                          brandName: 'Samsung',
-                        ),
-                        SingleProducts(
-                          id: '2',
-                          productName: 'Apple iPhone 13 Pro Max',
-                          productImage:
-                              'https://m-cdn.phonearena.com/images/phones/82890-350/Apple-iPhone-13-Pro-Max.webp',
-                          productPrice: [
-                            999.99,
-                            2100.44,
-                          ],
-                          productPriceImages: [
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://buywiseappliances.co.uk&size=128',
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://buywiseappliances.co.uk&size=128',
-                          ],
-                          productRating: 9.0,
-                          brandImage:
-                              'https://brandlogos.net/wp-content/uploads/2014/08/apple-logo-preview-400x400.png',
-                          brandName: 'Apple',
-                        ),
-                        SingleProducts(
-                          id: '3',
-                          productName: 'Google Pixel 7 Pro',
-                          productImage:
-                              'https://m-cdn.phonearena.com/images/phones/80394-350/Google-Pixel-7-Pro.webp',
-                          productPrice: [
-                            899.99,
-                            950.00,
-                          ],
-                          productPriceImages: [
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://store.google.com&size=128',
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://amazon.com&size=128',
-                          ],
-                          productRating: 8.5,
-                          brandImage:
-                              'https://brandlogos.net/wp-content/uploads/2020/11/google-logo-400x400.png',
-                          brandName: 'Google',
-                        ),
-                        SingleProducts(
-                          id: '4',
-                          productName: 'Xiaomi Mi 12 Ultra',
-                          productImage:
-                              'https://m-cdn.phonearena.com/images/phones/82704-350/Xiaomi-Mi-12-Ultra.webp',
-                          productPrice: [
-                            799.99,
-                            850.88,
-                          ],
-                          productPriceImages: [
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://mi.com&size=128',
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://ebay.com&size=128',
-                          ],
-                          productRating: 8.2,
-                          brandImage:
-                              'https://brandlogos.net/wp-content/uploads/2022/01/xiaomi_logo-400x400.png',
-                          brandName: 'Xiaomi',
-                        ),
-                        SingleProducts(
-                          id: '5',
-                          productName: 'OnePlus 10 Pro',
-                          productImage:
-                              'https://m-cdn.phonearena.com/images/phones/83261-350/OnePlus-10-Pro.webp',
-                          productPrice: [
-                            749.99,
-                            799.99,
-                          ],
-                          productPriceImages: [
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://oneplus.com&size=128',
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://bestbuy.com&size=128',
-                          ],
-                          productRating: 8.7,
-                          brandImage:
-                              'https://brandlogos.net/wp-content/uploads/2023/01/oneplus_logo-400x400.png',
-                          brandName: 'OnePlus',
-                        ),
-                        SingleProducts(
-                          id: '6',
-                          productName: 'Sony Xperia 1 IV',
-                          productImage:
-                              'https://m-cdn.phonearena.com/images/phones/83953-350/Sony-Xperia-1-IV.webp',
-                          productPrice: [
-                            1099.99,
-                            1199.99,
-                          ],
-                          productPriceImages: [
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://sony.com&size=128',
-                            'https://t0.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://walmart.com&size=128',
-                          ],
-                          productRating: 8.1,
-                          brandImage:
-                              'https://brandlogos.net/wp-content/uploads/2020/11/sony-logo-400x400.png',
-                          brandName: 'Sony',
-                        ),
-                      ],
-                    ),
+                  // Replace hardcoded SingleProducts with dynamic list
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: defaultSpace / 2),
+                    child: Obx(() {
+                      if (collectionController.isLoading.value) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (collectionController.error.value != null) {
+                        return Center(
+                            child: Text(
+                                'Error: ${collectionController.error.value}'));
+                      }
+                      // Use filteredItems for displaying products
+                      final items = collectionController.filteredItems;
+                      if (items.isEmpty) {
+                        return const Center(child: Text('No products found.'));
+                      }
+                      return FlexibleWrap(
+                        spacing: defaultSpace,
+                        runSpacing: defaultSpace,
+                        isOneRowExpanded: true,
+                        children: items.map<Widget>((product) {
+                          final brand = product['brand'] ?? {};
+                          return SingleProducts(
+                            id: product['id'].toString(),
+                            productName: product['productName'] ?? '',
+                            productImage:
+                                product['productImage'] ?? brand['image'] ?? '',
+                            productRating: product['productRating'] ?? 0.0,
+                            productPrice: product['productPrice'] ?? [],
+                            productPriceImages:
+                                product['productPriceImages'] ?? [],
+                            brandImage: product['brandImage'] ?? '',
+                            brandName: product['brandName'] ?? '',
+                            isCanSingle: false,
+                          );
+                        }).toList(),
+                      );
+                    }),
                   ),
                   const SizedBox(height: defaultSpace),
                 ],

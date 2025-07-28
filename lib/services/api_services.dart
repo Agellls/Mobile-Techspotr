@@ -397,4 +397,51 @@ class ApiServices {
       throw Exception('Error fetching awards: $e');
     }
   }
+
+  Future<Map<String, dynamic>?> fetchSingleAward(int awardId) async {
+    try {
+      final response = await dio.request(
+        '$baseUrl/award/$awardId',
+        options: Options(
+          method: 'GET',
+        ),
+      );
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['status'] == true && data['data'] != null) {
+          return data['data'];
+        }
+        return null;
+      } else {
+        throw Exception('Failed to fetch award: ${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Error fetching award: $e');
+      return null;
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchSingleCollection(int collectionId) async {
+    try {
+      final response = await dio.request(
+        '$baseUrl/collection/$collectionId',
+        options: Options(
+          method: 'GET',
+        ),
+      );
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['status'] == true && data['data'] != null) {
+          return data['data'];
+        }
+        throw Exception('Invalid collection response format');
+      } else {
+        throw Exception(
+            'Failed to fetch single collection: ${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Error fetching single collection: $e');
+      throw Exception('Error fetching single collection: $e');
+    }
+  }
 }

@@ -42,6 +42,13 @@ class ThemeController extends GetxController {
       'activeColor': const Color(0xff0ea5e9),
       'compareColor': const Color(0xfff97316),
     },
+    'apprankr': {
+      'primaryColor': const Color(0xFFffffff),
+      'secondaryColor': const Color(0xFFf2f1f4),
+      'thirdtyColor': const Color(0xff7523bc),
+      'activeColor': const Color(0xff10c3b8),
+      'compareColor': const Color(0xff5e6373),
+    },
   };
 
   void setTheme(String themeName) {
