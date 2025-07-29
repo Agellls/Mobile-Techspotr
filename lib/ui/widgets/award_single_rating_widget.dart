@@ -7,7 +7,7 @@ import '../../shared/theme.dart';
 
 class AwardSpecWidget extends StatelessWidget {
   final String title;
-  final int type; // 1 or 2
+  final int type;
   final String? score;
   final String? value;
   final String? unit;
@@ -27,47 +27,48 @@ class AwardSpecWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (type == 2) {
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.center, // <-- align left
         children: [
           Text(
             title,
-            style: whiteTextStyle.copyWith(
+            style: blackTextStyle.copyWith(
               fontSize: 16,
               fontWeight: bold,
-              color: whiteColor.withOpacity(0.8),
+              color: blackColor.withOpacity(0.8),
             ),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left, // <-- align left
           ),
           Text(
             '${score ?? ''} Score',
-            style: whiteTextStyle.copyWith(
+            style: blackTextStyle.copyWith(
               fontSize: 18,
               fontWeight: extrabold,
             ),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left, // <-- align left
           ),
           Text(
             value ?? '',
-            style: whiteTextStyle.copyWith(
+            style: blackTextStyle.copyWith(
               fontSize: 16,
               fontWeight: bold,
             ),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left, // <-- align left
           ),
           const SizedBox(height: defaultSpace * 2),
         ],
       );
     } else {
-      // Type 1: Percent bar + Value + Unit
       return Column(
+        crossAxisAlignment: CrossAxisAlignment.center, // <-- align left
         children: [
           Text(
             title,
             style: whiteTextStyle.copyWith(
               fontSize: 16,
               fontWeight: bold,
-              color: whiteColor.withOpacity(0.8),
+              color: blackColor.withOpacity(0.8),
             ),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left, // <-- align left
           ),
           LinearPercentIndicator(
             animation: true,
@@ -80,19 +81,19 @@ class AwardSpecWidget extends StatelessWidget {
           ),
           Text(
             value ?? '?',
-            style: whiteTextStyle.copyWith(
+            style: blackTextStyle.copyWith(
               fontSize: 18,
               fontWeight: extrabold,
             ),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left, // <-- align left
           ),
           Text(
             unit ?? '',
-            style: whiteTextStyle.copyWith(
+            style: blackTextStyle.copyWith(
               fontSize: 16,
               fontWeight: bold,
             ),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.left, // <-- align left
           ),
           const SizedBox(height: defaultSpace * 2),
         ],
@@ -117,7 +118,7 @@ class AwardSingleRatingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 140,
+      width: double.infinity, // <-- use full width for better spacing
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -141,7 +142,7 @@ class AwardSingleRatingWidget extends StatelessWidget {
               const SizedBox(width: defaultSpace / 2),
               Text(
                 totalRating.toDouble().toString(), // Always display as double
-                style: whiteTextStyle.copyWith(
+                style: blackTextStyle.copyWith(
                   fontSize: 26,
                   fontWeight: bold,
                 ),
@@ -151,66 +152,88 @@ class AwardSingleRatingWidget extends StatelessWidget {
           const SizedBox(height: defaultSpace / 2),
           Text(
             '$totalReview REVIEWS',
-            style: whiteTextStyle.copyWith(
+            style: blackTextStyle.copyWith(
                 fontSize: 16,
                 fontWeight: bold,
-                color: whiteColor.withOpacity(0.8)),
-          ),
-          const SizedBox(height: defaultSpace * 2),
-          SizedBox(
-            height: 155,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SvgPicture.string(
-                  AppSvg.petikAtas,
-                  width: 25,
-                  color: whiteColor.withOpacity(0.3),
-                ),
-                const SizedBox(height: defaultSpace / 2),
-                Text(
-                  subtitle,
-                  style: whiteTextStyle.copyWith(
-                    fontSize: 18,
-                    fontWeight: extrabold,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: defaultSpace / 2),
-                SvgPicture.string(
-                  AppSvg.petikBawah,
-                  width: 25,
-                  color: whiteColor.withOpacity(0.3),
-                ),
-              ],
-            ),
+                color: blackColor.withOpacity(0.8)),
           ),
           const SizedBox(height: defaultSpace),
-          ...specs.expand((item) {
-            var post = item['post'] ?? {};
-            List specList = post['specs'] ?? [];
-            return specList.map<Widget>((spec) {
-              var detail = spec['detail'];
-              // Clamp percent value between 0.0 and 1.0
-              double percentValue = 0.8;
-              if (detail != null && detail['score'] != null) {
-                percentValue = (detail['score'] as num) / 100;
-                if (percentValue < 0.0) percentValue = 0.0;
-                if (percentValue > 1.0) percentValue = 1.0;
+          // Show specs in rows, 2 per row
+          Builder(
+            builder: (context) {
+              List<Widget> specWidgets = [];
+              List specsList = [];
+              // Flatten all specs from all items
+              for (var item in specs) {
+                var post = item['post'] ?? {};
+                specsList.addAll(post['specs'] ?? []);
               }
-              return AwardSpecWidget(
-                title: spec['name'] ?? '',
-                type: spec['type'] ?? 1,
-                score: detail != null ? detail['score'].toString() : '?',
-                value: detail != null ? detail['value'].toString() : 'N/A',
-                unit: spec['unit'] ?? '',
-                percent: percentValue,
+              for (int i = 0; i < specsList.length; i += 2) {
+                specWidgets.add(
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: AwardSpecWidget(
+                            title: specsList[i]['name'] ?? '',
+                            type: specsList[i]['type'] ?? 1,
+                            score: specsList[i]['detail'] != null
+                                ? specsList[i]['detail']['score'].toString()
+                                : '?',
+                            value: specsList[i]['detail'] != null
+                                ? specsList[i]['detail']['value'].toString()
+                                : 'N/A',
+                            unit: specsList[i]['unit'] ?? '',
+                            percent: specsList[i]['detail'] != null &&
+                                    specsList[i]['detail']['score'] != null
+                                ? ((specsList[i]['detail']['score'] as num) /
+                                        100)
+                                    .clamp(0.0, 1.0)
+                                : 0.8,
+                          ),
+                        ),
+                      ),
+                      if (i + 1 < specsList.length)
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: AwardSpecWidget(
+                              title: specsList[i + 1]['name'] ?? '',
+                              type: specsList[i + 1]['type'] ?? 1,
+                              score: specsList[i + 1]['detail'] != null
+                                  ? specsList[i + 1]['detail']['score']
+                                      .toString()
+                                  : '?',
+                              value: specsList[i + 1]['detail'] != null
+                                  ? specsList[i + 1]['detail']['value']
+                                      .toString()
+                                  : 'N/A',
+                              unit: specsList[i + 1]['unit'] ?? '',
+                              percent: specsList[i + 1]['detail'] != null &&
+                                      specsList[i + 1]['detail']['score'] !=
+                                          null
+                                  ? ((specsList[i + 1]['detail']['score']
+                                              as num) /
+                                          100)
+                                      .clamp(0.0, 1.0)
+                                  : 0.8,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                );
+              }
+              return Column(
+                children: specWidgets,
               );
-            });
-          }),
-          const SizedBox(height: defaultSpace / 2),
+            },
+          ),
+
           Container(
+            margin: const EdgeInsets.symmetric(horizontal: defaultSpace * 3),
             padding: const EdgeInsets.symmetric(
               horizontal: defaultSpace,
               vertical: defaultSpace / 2,

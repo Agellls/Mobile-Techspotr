@@ -13,6 +13,7 @@ import 'package:flutter_application_1/ui/pages/morecompare_page.dart';
 import 'package:flutter_application_1/ui/pages/my_profile_page.dart';
 import 'package:flutter_application_1/ui/pages/personal_page.dart';
 import 'package:flutter_application_1/ui/pages/register_page.dart';
+import 'package:flutter_application_1/ui/pages/response_page.dart';
 import 'package:flutter_application_1/ui/pages/review_page.dart';
 import 'package:flutter_application_1/ui/pages/collection_single_page.dart';
 import 'package:flutter_application_1/ui/pages/single_page.dart';
@@ -191,6 +192,14 @@ class AppPages {
       name: RouteName.detailBrand,
       page: () => BrandDetailPage(),
       transition: Transition.downToUp,
+      showCupertinoParallax: false,
+    ),
+    GetPage(
+      name: RouteName.response,
+      page: () {
+        return ResponsePage();
+      },
+      transition: Transition.rightToLeft,
       showCupertinoParallax: false,
     ),
   ];

@@ -1,9 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/ui/widgets/award_single_item_widget.dart';
 import 'package:flutter_application_1/ui/widgets/award_single_detail_widget.dart';
-import 'package:flutter_application_1/ui/widgets/award_single_prices_widget.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -13,7 +11,6 @@ import '../../controllers/award_single_controller.dart';
 import '../../shared/app_svg.dart';
 import '../../shared/theme.dart';
 import '../../utilities/loading.dart';
-import '../widgets/award_single_rating_widget.dart';
 
 class AwardSinglePage extends StatelessWidget {
   const AwardSinglePage({super.key, this.awardId = 5});
@@ -21,7 +18,6 @@ class AwardSinglePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final horizontalScrollController = ScrollController();
     final controller = Get.put(AwardSingleController());
 
     // Fetch award data
@@ -316,65 +312,65 @@ class AwardSinglePage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: defaultSpace),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: defaultSpace),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.only(
-                              top: 5, bottom: 5, right: 10, left: 5),
-                          decoration: BoxDecoration(
-                            color: thirdtyColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.arrow_drop_down_circle_sharp,
-                                color: whiteColor,
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                'What\'s the deal ?',
-                                style: whiteTextStyle.copyWith(
-                                  fontSize: 14,
-                                  fontWeight: bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(
-                              top: 5, bottom: 5, right: 10, left: 5),
-                          decoration: BoxDecoration(
-                            color: thirdtyColor,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.arrow_drop_down_circle_sharp,
-                                color: whiteColor,
-                              ),
-                              const SizedBox(width: 5),
-                              Text(
-                                'What\'s the deal ?',
-                                style: whiteTextStyle.copyWith(
-                                  fontSize: 14,
-                                  fontWeight: bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: defaultSpace),
+                  // Padding(
+                  //   padding:
+                  //       const EdgeInsets.symmetric(horizontal: defaultSpace),
+                  //   child: Row(
+                  //     crossAxisAlignment: CrossAxisAlignment.start,
+                  //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //     children: [
+                  //       Container(
+                  //         padding: const EdgeInsets.only(
+                  //             top: 5, bottom: 5, right: 10, left: 5),
+                  //         decoration: BoxDecoration(
+                  //           color: thirdtyColor,
+                  //           borderRadius: BorderRadius.circular(10),
+                  //         ),
+                  //         child: Row(
+                  //           children: [
+                  //             Icon(
+                  //               Icons.arrow_drop_down_circle_sharp,
+                  //               color: whiteColor,
+                  //             ),
+                  //             const SizedBox(width: 5),
+                  //             Text(
+                  //               'What\'s the deal ?',
+                  //               style: whiteTextStyle.copyWith(
+                  //                 fontSize: 14,
+                  //                 fontWeight: bold,
+                  //               ),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //       Container(
+                  //         padding: const EdgeInsets.only(
+                  //             top: 5, bottom: 5, right: 10, left: 5),
+                  //         decoration: BoxDecoration(
+                  //           color: thirdtyColor,
+                  //           borderRadius: BorderRadius.circular(10),
+                  //         ),
+                  //         child: Row(
+                  //           children: [
+                  //             Icon(
+                  //               Icons.arrow_drop_down_circle_sharp,
+                  //               color: whiteColor,
+                  //             ),
+                  //             const SizedBox(width: 5),
+                  //             Text(
+                  //               'What\'s the deal ?',
+                  //               style: whiteTextStyle.copyWith(
+                  //                 fontSize: 14,
+                  //                 fontWeight: bold,
+                  //               ),
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  // const SizedBox(height: defaultSpace),
                   Padding(
                     padding:
                         const EdgeInsets.symmetric(horizontal: defaultSpace),
@@ -467,266 +463,266 @@ class AwardSinglePage extends StatelessWidget {
                       ],
                     ),
                   ),
+                  // const SizedBox(height: defaultSpace * 2),
+                  // Padding(
+                  //   padding:
+                  //       const EdgeInsets.symmetric(horizontal: defaultSpace),
+                  //   child: Column(
+                  //     crossAxisAlignment: CrossAxisAlignment.center,
+                  //     children: [
+                  //       Text(
+                  //         'Too Lazy to Scroll?',
+                  //         style: blackTextStyle.copyWith(
+                  //           fontSize: 20,
+                  //           fontWeight: bold,
+                  //         ),
+                  //         textAlign: TextAlign.center,
+                  //       ),
+                  //       Text(
+                  //         'Here’s the Cheat Sheet!',
+                  //         style: blackTextStyle.copyWith(
+                  //           fontSize: 14,
+                  //           fontWeight: regular,
+                  //           color: blackColor.withOpacity(0.6),
+                  //         ),
+                  //         textAlign: TextAlign.center,
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                  // const SizedBox(height: defaultSpace),
+                  // SingleChildScrollView(
+                  //   scrollDirection: Axis.horizontal,
+                  //   controller: horizontalScrollController,
+                  //   child: Container(
+                  //     padding: const EdgeInsets.symmetric(
+                  //       horizontal: defaultSpace / 2,
+                  //     ),
+                  //     decoration: BoxDecoration(
+                  //       color: thirdtyColor,
+                  //       border: Border(
+                  //         bottom: BorderSide(
+                  //           color: whiteColor,
+                  //           width: 0.1,
+                  //         ),
+                  //       ),
+                  //     ),
+                  //     child: Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.start,
+                  //       children: [
+                  //         Row(
+                  //           children: [
+                  //             Column(
+                  //               children: [
+                  //                 RotatedBox(
+                  //                   quarterTurns: 3,
+                  //                   child: Text(
+                  //                     'NO',
+                  //                     style: whiteTextStyle.copyWith(
+                  //                       fontWeight: extrabold,
+                  //                       fontSize: 20,
+                  //                       letterSpacing: 2,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //                 const SizedBox(height: 120),
+                  //                 RotatedBox(
+                  //                   quarterTurns: 3,
+                  //                   child: Text(
+                  //                     'NAME',
+                  //                     style: whiteTextStyle.copyWith(
+                  //                       fontWeight: extrabold,
+                  //                       fontSize: 20,
+                  //                       letterSpacing: 2,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //               ],
+                  //             ),
+                  //             const SizedBox(width: defaultSpace / 2),
+                  //             Container(
+                  //               width: 0.1,
+                  //               height: 350,
+                  //               color: whiteColor,
+                  //             ),
+                  //             const SizedBox(width: defaultSpace / 2),
+                  //             ...List.generate(
+                  //               (award['award_items'] ?? []).length,
+                  //               (i) {
+                  //                 final item = award['award_items'][i];
+                  //                 final post = item['post'] ?? {};
+                  //                 return Row(
+                  //                   mainAxisAlignment: MainAxisAlignment.start,
+                  //                   crossAxisAlignment:
+                  //                       CrossAxisAlignment.start,
+                  //                   children: [
+                  //                     AwardItemWidget(
+                  //                       index: i + 1,
+                  //                       totalScore: post['score'] ?? 0,
+                  //                       imageUrl: post['image'] ?? '',
+                  //                       brandLogoUrl:
+                  //                           post['brand']?['image'] ?? '',
+                  //                       brandName: post['brand']?['name'] ?? '',
+                  //                       productName: post['title'] ?? '',
+                  //                     ),
+                  //                     if (i <
+                  //                         (award['award_items'] ?? []).length -
+                  //                             1) ...[
+                  //                       const SizedBox(width: defaultSpace / 2),
+                  //                       Container(
+                  //                         width: 0.1,
+                  //                         height: 350,
+                  //                         color: whiteColor,
+                  //                       ),
+                  //                     ],
+                  //                   ],
+                  //                 );
+                  //               },
+                  //             ),
+                  //           ],
+                  //         ),
+                  //         Row(
+                  //           crossAxisAlignment: CrossAxisAlignment.start,
+                  //           children: [
+                  //             Column(
+                  //               children: [
+                  //                 RotatedBox(
+                  //                   quarterTurns: 3,
+                  //                   child: Text(
+                  //                     'RATINGS',
+                  //                     style: whiteTextStyle.copyWith(
+                  //                       fontWeight: extrabold,
+                  //                       fontSize: 20,
+                  //                       letterSpacing: 2,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //                 const SizedBox(height: defaultSpace * 2),
+                  //                 RotatedBox(
+                  //                   quarterTurns: 3,
+                  //                   child: Text(
+                  //                     'HIGHLIGHTS',
+                  //                     style: whiteTextStyle.copyWith(
+                  //                       fontWeight: extrabold,
+                  //                       fontSize: 20,
+                  //                       letterSpacing: 2,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //                 const SizedBox(height: defaultSpace * 2),
+                  //                 RotatedBox(
+                  //                   quarterTurns: 3,
+                  //                   child: Text(
+                  //                     'SPECS',
+                  //                     style: whiteTextStyle.copyWith(
+                  //                       fontWeight: extrabold,
+                  //                       fontSize: 20,
+                  //                       letterSpacing: 2,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //                 const SizedBox(height: defaultSpace),
+                  //               ],
+                  //             ),
+                  //             const SizedBox(width: defaultSpace / 2),
+                  //             Container(
+                  //               width: 0.1,
+                  //               height: 1380,
+                  //               color: whiteColor,
+                  //             ),
+                  //             const SizedBox(width: defaultSpace / 2),
+                  //             ...List.generate(
+                  //               (award['award_items'] ?? []).length,
+                  //               (i) {
+                  //                 final item = award['award_items'][i];
+                  //                 final post = item['post'] ?? {};
+                  //                 return Row(
+                  //                   mainAxisAlignment: MainAxisAlignment.start,
+                  //                   crossAxisAlignment:
+                  //                       CrossAxisAlignment.start,
+                  //                   children: [
+                  //                     AwardSingleRatingWidget(
+                  //                       totalRating: post['avg_rating'] ?? 0.0,
+                  //                       totalReview:
+                  //                           post['total_spec_useful'] ?? 0,
+                  //                       subtitle: item['subtitle'] ?? '',
+                  //                       specs: [item],
+                  //                     ),
+                  //                     if (i <
+                  //                         (award['award_items'] ?? []).length -
+                  //                             1) ...[
+                  //                       const SizedBox(width: defaultSpace / 2),
+                  //                       Container(
+                  //                         width: 0.1,
+                  //                         height: 1380,
+                  //                         color: whiteColor,
+                  //                       ),
+                  //                     ],
+                  //                   ],
+                  //                 );
+                  //               },
+                  //             ),
+                  //           ],
+                  //         ),
+                  //         Row(
+                  //           crossAxisAlignment: CrossAxisAlignment.center,
+                  //           children: [
+                  //             Column(
+                  //               children: [
+                  //                 RotatedBox(
+                  //                   quarterTurns: 3,
+                  //                   child: Text(
+                  //                     'PRICES',
+                  //                     style: whiteTextStyle.copyWith(
+                  //                       fontWeight: extrabold,
+                  //                       fontSize: 20,
+                  //                       letterSpacing: 2,
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //                 const SizedBox(height: defaultSpace),
+                  //               ],
+                  //             ),
+                  //             const SizedBox(width: defaultSpace / 2),
+                  //             Container(
+                  //               width: 0.1,
+                  //               height: 160,
+                  //               color: whiteColor,
+                  //             ),
+                  //             const SizedBox(width: defaultSpace / 2),
+                  //             ...List.generate(
+                  //               (award['award_items'] ?? []).length,
+                  //               (i) {
+                  //                 final item = award['award_items'][i];
+                  //                 final post = item['post'] ?? {};
+                  //                 final prices = post['prices'] ?? [];
+                  //                 return Row(
+                  //                   mainAxisAlignment: MainAxisAlignment.center,
+                  //                   crossAxisAlignment:
+                  //                       CrossAxisAlignment.center,
+                  //                   children: [
+                  //                     AwardSinglePricesWidget(prices: prices),
+                  //                     if (i <
+                  //                         (award['award_items'] ?? []).length -
+                  //                             1) ...[
+                  //                       const SizedBox(width: defaultSpace / 2),
+                  //                       Container(
+                  //                         width: 0.1,
+                  //                         height: 160,
+                  //                         color: whiteColor,
+                  //                       ),
+                  //                     ],
+                  //                   ],
+                  //                 );
+                  //               },
+                  //             ),
+                  //           ],
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
                   const SizedBox(height: defaultSpace * 2),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: defaultSpace),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Too Lazy to Scroll?',
-                          style: blackTextStyle.copyWith(
-                            fontSize: 20,
-                            fontWeight: bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        Text(
-                          'Here’s the Cheat Sheet!',
-                          style: blackTextStyle.copyWith(
-                            fontSize: 14,
-                            fontWeight: regular,
-                            color: blackColor.withOpacity(0.6),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: defaultSpace),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    controller: horizontalScrollController,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: defaultSpace / 2,
-                      ),
-                      decoration: BoxDecoration(
-                        color: thirdtyColor,
-                        border: Border(
-                          bottom: BorderSide(
-                            color: whiteColor,
-                            width: 0.1,
-                          ),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Column(
-                                children: [
-                                  RotatedBox(
-                                    quarterTurns: 3,
-                                    child: Text(
-                                      'NO',
-                                      style: whiteTextStyle.copyWith(
-                                        fontWeight: extrabold,
-                                        fontSize: 20,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 120),
-                                  RotatedBox(
-                                    quarterTurns: 3,
-                                    child: Text(
-                                      'NAME',
-                                      style: whiteTextStyle.copyWith(
-                                        fontWeight: extrabold,
-                                        fontSize: 20,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(width: defaultSpace / 2),
-                              Container(
-                                width: 0.1,
-                                height: 350,
-                                color: whiteColor,
-                              ),
-                              const SizedBox(width: defaultSpace / 2),
-                              ...List.generate(
-                                (award['award_items'] ?? []).length,
-                                (i) {
-                                  final item = award['award_items'][i];
-                                  final post = item['post'] ?? {};
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      AwardItemWidget(
-                                        index: i + 1,
-                                        totalScore: post['score'] ?? 0,
-                                        imageUrl: post['image'] ?? '',
-                                        brandLogoUrl:
-                                            post['brand']?['image'] ?? '',
-                                        brandName: post['brand']?['name'] ?? '',
-                                        productName: post['title'] ?? '',
-                                      ),
-                                      if (i <
-                                          (award['award_items'] ?? []).length -
-                                              1) ...[
-                                        const SizedBox(width: defaultSpace / 2),
-                                        Container(
-                                          width: 0.1,
-                                          height: 350,
-                                          color: whiteColor,
-                                        ),
-                                      ],
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Column(
-                                children: [
-                                  RotatedBox(
-                                    quarterTurns: 3,
-                                    child: Text(
-                                      'RATINGS',
-                                      style: whiteTextStyle.copyWith(
-                                        fontWeight: extrabold,
-                                        fontSize: 20,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: defaultSpace * 2),
-                                  RotatedBox(
-                                    quarterTurns: 3,
-                                    child: Text(
-                                      'HIGHLIGHTS',
-                                      style: whiteTextStyle.copyWith(
-                                        fontWeight: extrabold,
-                                        fontSize: 20,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: defaultSpace * 2),
-                                  RotatedBox(
-                                    quarterTurns: 3,
-                                    child: Text(
-                                      'SPECS',
-                                      style: whiteTextStyle.copyWith(
-                                        fontWeight: extrabold,
-                                        fontSize: 20,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: defaultSpace),
-                                ],
-                              ),
-                              const SizedBox(width: defaultSpace / 2),
-                              Container(
-                                width: 0.1,
-                                height: 1380,
-                                color: whiteColor,
-                              ),
-                              const SizedBox(width: defaultSpace / 2),
-                              ...List.generate(
-                                (award['award_items'] ?? []).length,
-                                (i) {
-                                  final item = award['award_items'][i];
-                                  final post = item['post'] ?? {};
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      AwardSingleRatingWidget(
-                                        totalRating: post['avg_rating'] ?? 0.0,
-                                        totalReview:
-                                            post['total_spec_useful'] ?? 0,
-                                        subtitle: item['subtitle'] ?? '',
-                                        specs: [item],
-                                      ),
-                                      if (i <
-                                          (award['award_items'] ?? []).length -
-                                              1) ...[
-                                        const SizedBox(width: defaultSpace / 2),
-                                        Container(
-                                          width: 0.1,
-                                          height: 1380,
-                                          color: whiteColor,
-                                        ),
-                                      ],
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Column(
-                                children: [
-                                  RotatedBox(
-                                    quarterTurns: 3,
-                                    child: Text(
-                                      'PRICES',
-                                      style: whiteTextStyle.copyWith(
-                                        fontWeight: extrabold,
-                                        fontSize: 20,
-                                        letterSpacing: 2,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: defaultSpace),
-                                ],
-                              ),
-                              const SizedBox(width: defaultSpace / 2),
-                              Container(
-                                width: 0.1,
-                                height: 160,
-                                color: whiteColor,
-                              ),
-                              const SizedBox(width: defaultSpace / 2),
-                              ...List.generate(
-                                (award['award_items'] ?? []).length,
-                                (i) {
-                                  final item = award['award_items'][i];
-                                  final post = item['post'] ?? {};
-                                  final prices = post['prices'] ?? [];
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      AwardSinglePricesWidget(prices: prices),
-                                      if (i <
-                                          (award['award_items'] ?? []).length -
-                                              1) ...[
-                                        const SizedBox(width: defaultSpace / 2),
-                                        Container(
-                                          width: 0.1,
-                                          height: 160,
-                                          color: whiteColor,
-                                        ),
-                                      ],
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: defaultSpace),
                   Text(
                     'Hall of Fame Finds',
                     style: blackTextStyle.copyWith(
@@ -762,6 +758,9 @@ class AwardSinglePage extends StatelessWidget {
                           prices: post['prices'] ?? [],
                           pros: List<String>.from(item['pros'] ?? []),
                           cons: List<String>.from(item['cons'] ?? []),
+                          awardItems: List<Map<String, dynamic>>.from(
+                              award['award_items'] ??
+                                  []), // <-- Pass all award items
                         );
                       },
                     ),

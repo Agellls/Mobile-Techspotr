@@ -10,7 +10,7 @@ class ButtonWidget extends StatelessWidget {
   final bool isActive;
   final int totalReaction;
   final int height;
-  final int width;
+  final double width;
   const ButtonWidget({
     super.key,
     required this.bgColor,
@@ -32,13 +32,8 @@ class ButtonWidget extends StatelessWidget {
             width: width.toDouble(),
             height: height.toDouble(),
             decoration: BoxDecoration(
-              color: bgActiveColor,
+              color: bgColor.withOpacity(0.7),
               borderRadius: BorderRadius.circular(60),
-              border: Border.all(
-                color: blackColor.withOpacity(0.3),
-                width: 3,
-                strokeAlign: BorderSide.strokeAlignInside,
-              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -47,9 +42,7 @@ class ButtonWidget extends StatelessWidget {
                 Text(
                   '$totalReaction People',
                   style: whiteTextStyle.copyWith(
-                    fontSize: 16,
-                    fontWeight: bold,
-                  ),
+                      fontSize: 16, fontWeight: bold, color: whiteColor),
                 ),
                 const SizedBox(width: defaultSpace / 2),
                 SvgPicture.string(

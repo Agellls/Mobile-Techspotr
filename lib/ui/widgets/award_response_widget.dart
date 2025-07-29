@@ -20,24 +20,19 @@ class AwardResponseWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(
-        horizontal: defaultSpace / 2,
+        horizontal: defaultSpace,
+        vertical: defaultSpace / 2,
       ),
       decoration: BoxDecoration(
         color: whiteColor,
-        border: Border(
-          left: BorderSide(
-              color: mainColor,
-              width: 1,
-              strokeAlign: BorderSide.strokeAlignInside),
-          right: BorderSide(
-              color: mainColor,
-              width: 1,
-              strokeAlign: BorderSide.strokeAlignInside),
-          bottom: BorderSide(
-              color: mainColor,
-              width: 1,
-              strokeAlign: BorderSide.strokeAlignInside),
-        ),
+        borderRadius: BorderRadius.circular(defaultSpace),
+        boxShadow: [
+          BoxShadow(
+            color: blackColor.withOpacity(0.5),
+            blurRadius: 1,
+            offset: const Offset(0, 0),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

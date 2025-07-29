@@ -16,6 +16,7 @@ abstract class RouteName {
   static const String detailBrand = '/detailbrand';
   static const String singleCollection = '/singlecollection';
   static const String singleAward = '/singleaward';
+  static const String response = '/response';
 
   // my account
   static const String myProfile = '/myprofile';
