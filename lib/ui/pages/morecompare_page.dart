@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/controllers/morecompare_menu_controller.dart';
+import 'package:flutter_application_1/controllers/morecompare_controller.dart';
 import 'package:flutter_application_1/ui/widgets/morecompare_widget.dart';
 import 'package:get/get.dart';
+import 'package:flutter_application_1/services/api_services.dart';
 
 import '../../shared/theme.dart';
 
@@ -11,9 +13,20 @@ class MorecomparePage extends StatelessWidget {
 
   final MorecompareMenuController morecompareMenuController =
       Get.put(MorecompareMenuController());
+  final MoreCompareController moreCompareController =
+      Get.put(MoreCompareController());
+  final args = Get.arguments ?? {};
+  final int postId = Get.arguments?['postId'];
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!moreCompareController.isLoading.value &&
+          moreCompareController.moreComparisons.isEmpty) {
+        moreCompareController.fetchMoreComparisons(postId);
+      }
+    });
+
     return Scaffold(
       backgroundColor: primaryColor,
       appBar: AppBar(
@@ -156,15 +169,15 @@ class MorecomparePage extends StatelessWidget {
                                   return Column(
                                     children: [
                                       const SizedBox(height: defaultSpace),
-                                      MorecompareWidget(
-                                        mainColor: thirdtyColor,
-                                      ),
+                                      // MorecompareWidget(
+                                      //   mainColor: thirdtyColor,
+                                      // ),
                                     ],
                                   );
                                 }
-                                return MorecompareWidget(
-                                  mainColor: thirdtyColor,
-                                );
+                                // return MorecompareWidget(
+                                //   mainColor: thirdtyColor,
+                                // );
                               },
                             ),
                           );
@@ -179,15 +192,15 @@ class MorecomparePage extends StatelessWidget {
                                   return Column(
                                     children: [
                                       const SizedBox(height: defaultSpace),
-                                      MorecompareWidget(
-                                        mainColor: compareColor,
-                                      ),
+                                      // MorecompareWidget(
+                                      //   mainColor: compareColor,
+                                      // ),
                                     ],
                                   );
                                 }
-                                return MorecompareWidget(
-                                  mainColor: compareColor,
-                                );
+                                // return MorecompareWidget(
+                                //   mainColor: compareColor,
+                                // );
                               },
                             ),
                           );
@@ -198,27 +211,39 @@ class MorecomparePage extends StatelessWidget {
                   ),
                 ],
               )
-            : Expanded(
-                child: ListView.separated(
-                  itemCount: 5,
+            : Obx(() {
+                if (moreCompareController.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (moreCompareController.error.isNotEmpty) {
+                  return Center(
+                      child: Text('Error: ${moreCompareController.error}'));
+                }
+                final data = moreCompareController.moreComparisons;
+                if (data.isEmpty) {
+                  return const Center(child: Text('No comparisons found.'));
+                }
+                return ListView.separated(
+                  itemCount: data.length,
                   separatorBuilder: (context, index) => const SizedBox(),
                   itemBuilder: (context, index) {
-                    if (index == 0) {
-                      return Column(
-                        children: [
-                          const SizedBox(height: defaultSpace / 2),
-                          MorecompareWidget(
-                            mainColor: thirdtyColor,
-                          ),
-                        ],
-                      );
-                    }
+                    final item = data[index];
+                    final user = item['user'] ?? {};
+                    final post1 = item['post1'] ?? {};
+                    final post2 = item['post2'] ?? {};
                     return MorecompareWidget(
                       mainColor: thirdtyColor,
+                      name: user['name'] ?? 'Unknown',
+                      timedate: item['create_time_elapsed'] ?? '',
+                      profileImageUrl: user['image'] ?? '',
+                      imagePost1: post1['image'] ?? '',
+                      imagePost2: post2['image'] ?? '',
+                      totalCompare: user['total_compare'] ?? 0,
+                      totalLikes: item['total_reaction'] ?? 0,
                     );
                   },
-                ),
-              ),
+                );
+              }),
       ),
     );
   }

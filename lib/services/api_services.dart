@@ -7,7 +7,8 @@ class ApiServices {
   final Dio dio = Dio();
   final box = GetStorage();
   // final authCon = get_package.Get.find<AuthController>();
-  final String baseUrl = 'http://192.168.1.77/techspotr/api';
+  // final String baseUrl = 'http://192.168.1.77/techspotr/api';
+  final String baseUrl = 'https://techspotr.com/api';
 
   Future<List<Map<String, dynamic>>> fetchPopularPosts({
     int page = 1,
@@ -442,6 +443,31 @@ class ApiServices {
     } catch (e) {
       print('Error fetching single collection: $e');
       throw Exception('Error fetching single collection: $e');
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> fetchComparison(int postId) async {
+    try {
+      final response = await dio.request(
+        '$baseUrl/compare?post_id=$postId',
+        options: Options(
+          method: 'GET',
+        ),
+      );
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data['status'] == true && data['data'] != null) {
+          // Parse the list directly from data['data']
+          return List<Map<String, dynamic>>.from(data['data']);
+        }
+        throw Exception('Invalid compare response format');
+      } else {
+        throw Exception(
+            'Failed to fetch comparison: ${response.statusMessage}');
+      }
+    } catch (e) {
+      print('Error fetching comparison: $e');
+      throw Exception('Error fetching comparison: $e');
     }
   }
 }

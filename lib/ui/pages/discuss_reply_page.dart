@@ -16,20 +16,29 @@ class DiscussReplyPage extends StatelessWidget {
   final Color mainColor;
   DiscussReplyPage({super.key, required this.mainColor});
 
-  final List<String> tags = [
-    'LG',
-    'Smart TV',
-    'OLED',
-    '4K',
-    'Gaming',
-    'Home Theater',
-  ];
   final TextEditingController reasonController = TextEditingController();
   final TextEditingController commentController = TextEditingController();
   final box = GetStorage();
 
   @override
   Widget build(BuildContext context) {
+    final args = Get.arguments ?? {};
+    final userName = args['name']?.toString() ?? 'John Doe';
+    final userImage = (args['discussion']?['user']?['image'] ??
+        'https://wallpapers.com/images/featured-full/cool-profile-picture-87h46gcobjl5e4xu.jpg');
+    final totalDiscuss = args['totalDiscuss']?.toString() ?? '1';
+    final timeDate = args['timedate']?.toString() ?? '2 days ago';
+    final title =
+        args['title']?.toString() ?? 'How to change the water filter?';
+    final content = args['content']?.toString() ??
+        'Sunt occaecat duis eiusmod mollit elit ex fugiat veniam commodo non. Fugiat do sint veniam officia deserunt exercitation aliqua. Laborum enim enim do do ullamco. Fugiat consectetur magna in ut amet cupidatat aliqua.';
+    final tags = (args['tags'] as List?)
+            ?.map((e) => e['name']?.toString() ?? '')
+            .where((t) => t.isNotEmpty)
+            .toList() ??
+        [];
+    final discussionId = args['id'] ?? 1;
+
     return Scaffold(
       backgroundColor: whiteColor,
       appBar: AppBar(
@@ -72,8 +81,7 @@ class DiscussReplyPage extends StatelessWidget {
                     children: [
                       ClipOval(
                         child: CachedNetworkImage(
-                          imageUrl:
-                              'https://wallpapers.com/images/featured-full/cool-profile-picture-87h46gcobjl5e4xu.jpg',
+                          imageUrl: userImage,
                           width: 50,
                           height: 50,
                           fit: BoxFit.cover,
@@ -95,14 +103,14 @@ class DiscussReplyPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'John Doe',
+                            userName,
                             style: blackTextStyle.copyWith(
                               fontSize: 18,
                               fontWeight: bold,
                             ),
                           ),
                           Text(
-                            '1 Discussions',
+                            '$totalDiscuss Discussions',
                             style: blackTextStyle.copyWith(
                               fontSize: 14,
                               fontWeight: regular,
@@ -113,7 +121,7 @@ class DiscussReplyPage extends StatelessWidget {
                       ),
                       const Spacer(),
                       Text(
-                        '2 days ago',
+                        timeDate,
                         style: blackTextStyle.copyWith(
                           fontSize: 14,
                           fontWeight: regular,
@@ -126,7 +134,7 @@ class DiscussReplyPage extends StatelessWidget {
                   // discuss content
                   const SizedBox(height: defaultSpace),
                   Text(
-                    'How to change the water filter?',
+                    title,
                     style: blackTextStyle.copyWith(
                       fontSize: 16,
                       fontWeight: bold,
@@ -134,7 +142,7 @@ class DiscussReplyPage extends StatelessWidget {
                   ),
                   const SizedBox(height: defaultSpace / 2),
                   Text(
-                    'Sunt occaecat duis eiusmod mollit elit ex fugiat veniam commodo non. Fugiat do sint veniam officia deserunt exercitation aliqua. Laborum enim enim do do ullamco. Fugiat consectetur magna in ut amet cupidatat aliqua.',
+                    content,
                     style: blackTextStyle.copyWith(
                       fontSize: 14,
                       fontWeight: regular,
@@ -209,7 +217,7 @@ class DiscussReplyPage extends StatelessWidget {
                         children: [
                           GestureDetector(
                             onTap: () => Share.share(
-                                'Check this out, agellls has write discussion in troupon. you can view more here https://troupon.com/discuss/'),
+                                'Check this out, $userName has written a discussion in Techspotr. View more here https://techspotr.com/discuss/$discussionId'),
                             child: Container(
                               color: primaryColor,
                               child: Icon(
@@ -224,7 +232,7 @@ class DiscussReplyPage extends StatelessWidget {
                             onTap: () => Get.bottomSheet(
                               ReportWidget(
                                 reasonController: reasonController,
-                                id: 1,
+                                id: discussionId,
                               ),
                               isScrollControlled: true,
                             ),
@@ -265,7 +273,7 @@ class DiscussReplyPage extends StatelessWidget {
               onPressed: () {
                 Get.bottomSheet(
                   RepliesWidget(
-                    id: 1, // Sample ID, replace with actual ID
+                    id: discussionId,
                     commentController: commentController,
                   ),
                   isScrollControlled: true,

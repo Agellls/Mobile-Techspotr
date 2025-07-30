@@ -135,7 +135,6 @@ class ComparisonWidget extends StatelessWidget {
               ),
             ),
             if (usingScores) ...[
-              const Spacer(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [

@@ -12,7 +12,24 @@ import '../../utilities/loading.dart';
 
 class MorecompareWidget extends StatelessWidget {
   final Color mainColor;
-  MorecompareWidget({super.key, required this.mainColor});
+  final String name;
+  final String timedate;
+  final String profileImageUrl;
+  final String imagePost1;
+  final String imagePost2;
+  final int totalCompare;
+  final int totalLikes;
+  MorecompareWidget({
+    super.key,
+    required this.mainColor,
+    required this.name,
+    required this.timedate,
+    required this.profileImageUrl,
+    required this.imagePost1,
+    required this.imagePost2,
+    required this.totalCompare,
+    required this.totalLikes,
+  });
 
   final TextEditingController reasonController = TextEditingController();
 
@@ -47,8 +64,7 @@ class MorecompareWidget extends StatelessWidget {
               children: [
                 ClipOval(
                   child: CachedNetworkImage(
-                    imageUrl:
-                        'https://wallpapers.com/images/featured-full/cool-profile-picture-87h46gcobjl5e4xu.jpg',
+                    imageUrl: profileImageUrl,
                     width: 50,
                     height: 50,
                     fit: BoxFit.cover,
@@ -70,14 +86,14 @@ class MorecompareWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'John Doe',
+                      name,
                       style: blackTextStyle.copyWith(
                         fontSize: 18,
                         fontWeight: bold,
                       ),
                     ),
                     Text(
-                      '1 Comparison',
+                      '$totalCompare Comparison',
                       style: blackTextStyle.copyWith(
                         fontSize: 14,
                         fontWeight: regular,
@@ -88,7 +104,7 @@ class MorecompareWidget extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '2 days ago',
+                  timedate,
                   style: blackTextStyle.copyWith(
                     fontSize: 14,
                     fontWeight: regular,
@@ -113,8 +129,7 @@ class MorecompareWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       CachedNetworkImage(
-                        imageUrl:
-                            'https://cdn-files.kimovil.com/phone_front/0011/88/thumb_1087879_phone_front_small.jpg',
+                        imageUrl: imagePost1,
                         width: 120,
                         height: 120,
                         placeholder: (context, url) => Shimmer.fromColors(
@@ -128,16 +143,6 @@ class MorecompareWidget extends StatelessWidget {
                           height: 120,
                           fit: BoxFit.cover,
                         ),
-                      ),
-                      const SizedBox(height: defaultSpace / 2),
-                      Text(
-                        'Esse commodo commodo cillum quis.',
-                        style: blackTextStyle.copyWith(
-                          fontSize: 16,
-                          fontWeight: bold,
-                        ),
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
@@ -198,8 +203,7 @@ class MorecompareWidget extends StatelessWidget {
                   child: Column(
                     children: [
                       CachedNetworkImage(
-                        imageUrl:
-                            'https://cdn-files.kimovil.com/phone_front/0011/88/thumb_1087879_phone_front_small.jpg',
+                        imageUrl: imagePost2,
                         width: 120,
                         height: 120,
                         placeholder: (context, url) => Shimmer.fromColors(
@@ -213,16 +217,6 @@ class MorecompareWidget extends StatelessWidget {
                           height: 120,
                           fit: BoxFit.cover,
                         ),
-                      ),
-                      const SizedBox(height: defaultSpace / 2),
-                      Text(
-                        'Esse commodo commodo cillum quis.',
-                        style: blackTextStyle.copyWith(
-                          fontSize: 16,
-                          fontWeight: bold,
-                        ),
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
                       ),
                     ],
                   ),
@@ -263,7 +257,7 @@ class MorecompareWidget extends StatelessWidget {
                     ),
                     const SizedBox(width: 5),
                     Text(
-                      '0 Likes',
+                      '$totalLikes Likes',
                       style: blackTextStyle.copyWith(
                         fontSize: 14,
                         fontWeight: regular,

@@ -223,6 +223,13 @@ class DiscussWidget extends StatelessWidget {
                       Get.toNamed(RouteName.discussReply, arguments: {
                         'mainColor': mainColor,
                         'discussion': discussion,
+                        'name': user['name'] ?? '',
+                        'totalDiscuss': user['total_discuss'] ?? 0,
+                        'timedate': discussion['create_time_elapsed'] ?? '',
+                        'title': discussion['title'] ?? '',
+                        'content': discussion['content'] ?? '',
+                        'tags': discussion['tags'] ?? [],
+                        'id': discussion['id'] ?? 0,
                       });
                     },
                     child: Container(

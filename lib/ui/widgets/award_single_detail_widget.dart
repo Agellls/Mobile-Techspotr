@@ -299,30 +299,46 @@ class AwardSingleDetailWidget extends StatelessWidget {
           ],
         ),
         if (awardItems.isNotEmpty && index - 1 < awardItems.length)
-          Obx(() => showFull.value
-              ? Builder(
-                  builder: (context) {
-                    final item = awardItems[index - 1];
-                    final post = item['post'] ?? {};
-                    return AwardSingleRatingWidget(
-                      totalRating: post['avg_rating'] ?? 0.0,
-                      totalReview: post['total_spec_useful'] ?? 0,
-                      subtitle: item['subtitle'] ?? '',
-                      specs: [item], // Pass only the current item
-                    );
-                  },
-                )
-              : const SizedBox.shrink()),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 350),
+            transitionBuilder: (child, animation) =>
+                FadeTransition(opacity: animation, child: child),
+            child: Obx(() => showFull.value
+                ? Builder(
+                    key: const ValueKey('showSpecs'),
+                    builder: (context) {
+                      final item = awardItems[index - 1];
+                      final post = item['post'] ?? {};
+                      return AwardSingleRatingWidget(
+                        totalRating: post['avg_rating'] ?? 0.0,
+                        totalReview: post['total_spec_useful'] ?? 0,
+                        subtitle: item['subtitle'] ?? '',
+                        specs: [item],
+                      );
+                    },
+                  )
+                : const SizedBox.shrink(
+                    key: ValueKey('hideSpecs'),
+                  )),
+          ),
         Column(
           children: [
             const SizedBox(height: defaultSpace),
-            Obx(() => showFull.value
-                ? AwardTextWidget(
-                    content: content,
-                    pros: pros,
-                    cons: cons,
-                  )
-                : const SizedBox.shrink()),
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 350),
+              transitionBuilder: (child, animation) =>
+                  FadeTransition(opacity: animation, child: child),
+              child: Obx(() => showFull.value
+                  ? AwardTextWidget(
+                      key: const ValueKey('showText'),
+                      content: content,
+                      pros: pros,
+                      cons: cons,
+                    )
+                  : const SizedBox.shrink(
+                      key: ValueKey('hideText'),
+                    )),
+            ),
             const SizedBox(height: defaultSpace / 2),
             GestureDetector(
               onTap: () {

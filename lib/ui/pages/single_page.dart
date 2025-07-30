@@ -376,7 +376,12 @@ class SinglePage extends StatelessWidget {
                             iconSvg: AppSvg.compare,
                             text: 'Comparisons',
                             fullWidth: true,
-                            ontap: () => Get.toNamed(RouteName.moreCompare),
+                            ontap: () =>
+                                Get.toNamed(RouteName.moreCompare, arguments: {
+                              'isCompare': false,
+                              'postId': int.tryParse(productId),
+                              'productName': singleController.productName,
+                            }),
                           ),
                         ),
                       ],
