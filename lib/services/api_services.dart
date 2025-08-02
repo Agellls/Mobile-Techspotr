@@ -7,8 +7,8 @@ class ApiServices {
   final Dio dio = Dio();
   final box = GetStorage();
   // final authCon = get_package.Get.find<AuthController>();
-  // final String baseUrl = 'http://192.168.1.77/techspotr/api';
-  final String baseUrl = 'https://techspotr.com/api';
+  final String baseUrl = 'http://192.168.1.77/techspotr/api';
+  // final String baseUrl = 'https://techspotr.com/api';
 
   Future<List<Map<String, dynamic>>> fetchPopularPosts({
     int page = 1,

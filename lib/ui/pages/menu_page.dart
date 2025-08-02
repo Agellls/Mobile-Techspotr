@@ -5,8 +5,10 @@ import 'package:get/get.dart';
 import 'package:flutter_application_1/ui/widgets/menu_widget.dart';
 import 'package:flutter_application_1/ui/pages/home_page.dart';
 import 'package:flutter_application_1/ui/pages/brand_page.dart';
+import 'package:flutter_application_1/ui/widgets/popup_login.dart'; // Add this import for PopupLogin
 
 import '../../controllers/profile_controller.dart';
+import '../../shared/theme.dart';
 
 class MenuController extends GetxController {
   var selectedIndex = 0.obs;
@@ -33,7 +35,15 @@ class MenuPage extends StatelessWidget {
               HomePage(),
               BrandPage(),
               BlogPage(),
-              ProfilePage(),
+              if (controller.isLoggedIn.value)
+                ProfilePage()
+              else
+                Column(
+                  children: [
+                    const SizedBox(height: defaultSpace * 2),
+                    PopupLogin(),
+                  ],
+                ),
             ],
           )),
       bottomNavigationBar: Obx(() => MenuWidget(

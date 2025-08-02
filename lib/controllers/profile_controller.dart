@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 
 class ProfileController extends GetxController {
   final RxBool isEdit = false.obs;
+  var isLoggedIn = false.obs;
   final Rx<File?> profileImage = Rx<File?>(null);
   final RxString profileImageUrl =
       'https://i.etsystatic.com/31548528/r/il/ffde13/5804742914/il_794xN.5804742914_ap2d.jpg'
